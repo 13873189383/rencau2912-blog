@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>dev.log — rencai2912 的技术博客</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<style>
+  :root[data-theme="dark"]{--bg:#0a0a0f;--bg-2:#12121a;--surface:#1b1b26;--surface-2:#232330;--border:#2a2a38;--text:#ececf2;--text-muted:#8a8aa0;--accent:#d4ff3a;--accent-2:#ff5d8f;--accent-glow:rgba(212,255,58,0.22);--grid:rgba(255,255,255,0.025);--header-bg:rgba(10,10,15,0.7)}
+  :root[data-theme="dim"]{--bg:#181822;--bg-2:#20202c;--surface:#2a2a38;--surface-2:#34344a;--border:#3a3a4a;--text:#d6d6e0;--text-muted:#9595a8;--accent:#b8d932;--accent-2:#d94a76;--accent-glow:rgba(184,217,50,0.18);--grid:rgba(255,255,255,0.03);--header-bg:rgba(24,24,34,0.7)}
+  :root[data-theme="light"]{--bg:#faf6e8;--bg-2:#f0ebd9;--surface:#fff;--surface-2:#f7f2e3;--border:#d8d2bc;--text:#1a1a24;--text-muted:#5a5a68;--accent:#4a7a00;--accent-2:#c43668;--accent-glow:rgba(74,122,0,0.15);--grid:rgba(0,0,0,0.035);--header-bg:rgba(250,246,232,0.75)}
+  *{transition:background-color .4s ease,color .4s ease,border-color .4s ease,fill .4s ease}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif;min-height:100vh;overflow-x:hidden}
+  .mono{font-family:'JetBrains Mono','PingFang SC','Microsoft YaHei',monospace}
+  #progress-bar{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:100;box-shadow:0 0 14px var(--accent-glow),0 0 4px var(--accent);transition:width .08s linear}
+  .grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:56px 56px;pointer-events:none;z-index:0;mask-image:radial-gradient(ellipse 80% 60% at center,black 20%,transparent 80%);-webkit-mask-image:radial-gradient(ellipse 80% 60% at center,black 20%,transparent 80%)}
+  .blob{position:fixed;border-radius:50%;filter:blur(90px);opacity:.45;pointer-events:none;z-index:0;will-change:transform}
+  .blob-1{animation:float1 22s ease-in-out infinite}
+  .blob-2{animation:float2 28s ease-in-out infinite}
+  @keyframes float1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,40px) scale(1.1)}}
+  @keyframes float2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-50px,-30px) scale(.9)}}
+  header.site-head{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:var(--header-bg);border-bottom:1px solid var(--border)}
+  .logo{font-family:'JetBrains Mono',monospace;font-weight:700;position:relative;display:inline-block}
+  .logo::after{content:'_';color:var(--accent);animation:blink 1s steps(2) infinite;margin-left:1px}
+  @keyframes blink{50%{opacity:0}}
+  .nav-link{position:relative;transition:color .3s}
+  .nav-link::after{content:'';position:absolute;left:0;right:0;bottom:-4px;height:1px;background:var(--accent);transform:scaleX(0);transform-origin:right;transition:transform .3s ease}
+  .nav-link:hover{color:var(--accent)}
+  .nav-link:hover::after{transform:scaleX(1);transform-origin:left}
+  .theme-toggle{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:3px;gap:2px}
+  .theme-toggle button{width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:transparent;color:var(--text-muted);cursor:pointer;transition:background .3s,color .3s,transform .3s;font-size:12px;border:none}
+  .theme-toggle button:hover{color:var(--text)}
+  .theme-toggle button.active{background:var(--accent);color:var(--bg);transform:scale(1.05)}
+  .hero-spotlight{position:absolute;inset:0;pointer-events:none;background:radial-gradient(500px circle at var(--mx,50%) var(--my,50%),var(--accent-glow),transparent 60%);opacity:.7;transition:opacity .4s}
+  .terminal{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 24px 60px -20px rgba(0,0,0,.5),0 0 0 1px var(--border);overflow:hidden;will-change:transform;transition:transform .4s ease-out,background-color .4s,border-color .4s,box-shadow .4s}
+  .terminal-head{background:var(--surface-2);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px}
+  .tdot{width:12px;height:12px;border-radius:50%}
+  .cursor-bar{display:inline-block;width:9px;height:1.05em;background:var(--accent);vertical-align:text-bottom;margin-left:2px;animation:blink 1s steps(2) infinite;box-shadow:0 0 8px var(--accent-glow)}
+  .btn-primary{background:var(--accent);color:var(--bg);padding:12px 22px;border-radius:10px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:8px;transition:transform .25s,box-shadow .25s,background .4s,color .4s;border:1px solid var(--accent)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px var(--accent-glow),0 0 0 4px var(--accent-glow)}
+  .btn-ghost{border:1px solid var(--border);color:var(--text);background:transparent;padding:12px 22px;border-radius:10px;font-weight:500;font-size:14px;display:inline-flex;align-items:center;gap:8px;transition:transform .25s,border-color .3s,color .3s,background .4s}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+  .tag{font-family:'JetBrains Mono','PingFang SC',monospace;font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid var(--border);color:var(--text-muted);background:var(--bg-2);display:inline-flex;align-items:center;gap:5px;letter-spacing:.02em}
+  .tag.accent{color:var(--accent);border-color:var(--accent);background:var(--accent-glow)}
+  .tag i{font-size:10px}
+  .live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 0 rgba(74,222,128,.7);animation:pulse-dot 2s infinite;flex-shrink:0}
+  @keyframes pulse-dot{0%{box-shadow:0 0 0 0 rgba(74,222,128,.6)}70%{box-shadow:0 0 0 8px rgba(74,222,128,0)}100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}}
+  .article-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px;position:relative;overflow:hidden;cursor:pointer;transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s ease,border-color .4s ease,background .4s ease}
+  .article-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent-glow),transparent 55%);opacity:0;transition:opacity .4s;pointer-events:none}
+  .article-card::after{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:var(--accent);transition:height .4s ease}
+  .article-card:hover{transform:translateY(-8px);border-color:var(--accent);box-shadow:0 24px 50px -20px rgba(0,0,0,.55),0 0 0 1px var(--accent)}
+  .article-card:hover::before{opacity:1}
+  .article-card:hover::after{height:100%}
+  .article-card:hover h3{color:var(--accent)}
+  .article-card h3{transition:color .3s}
+  .article-card .arrow{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:1px solid var(--border);color:var(--text-muted);transition:all .3s}
+  .article-card:hover .arrow{background:var(--accent);color:var(--bg);border-color:var(--accent);transform:rotate(-45deg)}
+  .code-block{background:var(--bg-2);border:1px solid var(--border);border-radius:12px;overflow:hidden;position:relative;transition:border-color .3s,background .4s;margin:1.5em 0}
+  .code-block:hover{border-color:var(--accent)}
+  .code-block-head{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--surface);border-bottom:1px solid var(--border)}
+  .code-block pre{padding:18px 20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.75;margin:0}
+  .copy-btn{background:var(--surface-2);border:1px solid var(--border);border-radius:7px;padding:5px 11px;font-size:11px;font-family:'JetBrains Mono','PingFang SC',monospace;color:var(--text-muted);cursor:pointer;opacity:0;transition:all .3s;display:inline-flex;align-items:center;gap:5px;letter-spacing:.05em}
+  .code-block:hover .copy-btn{opacity:1}
+  .copy-btn:hover{color:var(--accent);border-color:var(--accent)}
+  .copy-btn.flashing{background:var(--accent)!important;color:var(--bg)!important;border-color:var(--accent)!important;animation:copyFlash .7s ease}
+  @keyframes copyFlash{0%{transform:scale(1)}35%{transform:scale(1.15);box-shadow:0 0 28px var(--accent-glow)}100%{transform:scale(1)}}
+  .code-block .sweep{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,var(--accent-glow) 50%,transparent);transform:translateX(-100%);opacity:0}
+  .code-block.copied .sweep{animation:sweep .9s ease}
+  @keyframes sweep{0%{transform:translateX(-100%);opacity:0}50%{opacity:1}100%{transform:translateX(100%);opacity:0}}
+  .syn-kw{color:var(--accent-2)}.syn-str{color:var(--accent)}.syn-cm{color:var(--text-muted);font-style:italic}.syn-fn{color:#6bd5ff}.syn-nm{color:#ffb347}.syn-pr{color:#c8a8ff}
+  [data-theme="light"] .syn-fn{color:#0d6cbd}[data-theme="light"] .syn-nm{color:#b35900}[data-theme="light"] .syn-pr{color:#7c4dff}
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1),background-color .4s,border-color .4s}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+  #toast{position:fixed;bottom:24px;right:24px;padding:12px 18px;border-radius:10px;border:1px solid var(--accent);background:var(--surface);color:var(--accent);font-family:'JetBrains Mono','PingFang SC',monospace;font-size:13px;z-index:400;pointer-events:none;opacity:0;transform:translateY(10px);transition:opacity .3s,transform .3s,background .4s,color .4s,border-color .4s;display:flex;align-items:center;gap:8px;box-shadow:0 12px 32px -8px rgba(0,0,0,.4)}
+  #toast.show{opacity:1;transform:translateY(0)}
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px;border:2px solid var(--bg)}
+  ::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+  ::selection{background:var(--accent);color:var(--bg)}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  @media (max-width:768px){.copy-btn{opacity:1}.terminal{transform:none!important}}
+  #article-modal{position:fixed;inset:0;z-index:300;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px}
+  #article-modal.open{display:flex}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:-1;animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .modal-content{background:var(--surface);border:1px solid var(--border);border-radius:16px;max-width:800px;width:100%;padding:40px;position:relative;box-shadow:0 24px 60px -10px rgba(0,0,0,.6);animation:slideUp .4s cubic-bezier(.2,.8,.2,1)}
+  @media (max-width:640px){.modal-content{padding:24px 20px}#article-modal{padding:10px}}
+  @keyframes slideUp{from{transform:translateY(40px) scale(.98);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+  .modal-close{position:sticky;top:-16px;float:right;width:36px;height:36px;border-radius:50%;background:var(--bg-2);border:1px solid var(--border);color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;margin-bottom:-36px;z-index:10}
+  .modal-close:hover{background:var(--accent);color:var(--bg);border-color:var(--accent);transform:rotate(90deg)}
+  .article-body h1{font-size:28px;font-weight:700;margin-bottom:16px;line-height:1.3;letter-spacing:-.5px}
+  .article-body h2{font-size:22px;font-weight:700;margin-top:40px;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+  .article-body h2::before{content:'//';color:var(--accent);font-family:'JetBrains Mono',monospace}
+  .article-body h3{font-size:17px;font-weight:600;margin-top:28px;margin-bottom:12px;color:var(--text)}
+  .article-body p{color:var(--text-muted);line-height:1.8;margin-bottom:16px;font-size:15px}
+  .article-body strong{color:var(--text);font-weight:600}
+  .article-body blockquote{border-left:3px solid var(--accent);background:var(--accent-glow);padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;color:var(--text)}
+  .article-body blockquote p{color:var(--text);margin-bottom:0}
+  .article-body ul,.article-body ol{margin:16px 0;padding-left:24px;color:var(--text-muted)}
+  .article-body li{margin-bottom:8px;line-height:1.7;font-size:15px}
+  .article-body code:not(pre code){background:var(--bg-2);border:1px solid var(--border);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent-2)}
+  .article-body table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;display:block;overflow-x:auto}
+  .article-body th,.article-body td{border:1px solid var(--border);padding:10px 14px;text-align:left;white-space:nowrap}
+  .article-body th{background:var(--bg-2);color:var(--text);font-weight:600}
+  .article-body td{color:var(--text-muted)}
+  .article-body hr{border:0;border-top:1px solid var(--border);margin:30px 0}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div class="grid-bg"></div>
+<div class="blob blob-1" style="top:-150px;left:-120px;width:480px;height:480px;background:var(--accent)"></div>
+<div class="blob blob-2" style="bottom:-200px;right:-150px;width:580px;height:580px;background:var(--accent-2)"></div>
+
+<header class="site-head sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+    <a href="#" class="logo text-lg" aria-label="dev.log 首页">dev.log</a>
+    <nav class="hidden md:flex items-center gap-7 text-sm mono" style="color:var(--text-muted)">
+      <a href="#articles" class="nav-link">/文章</a>
+      <a href="#snippets" class="nav-link">/代码片段</a>
+      <a href="#about" class="nav-link">/关于</a>
+    </nav>
+    <div class="flex items-center gap-3">
+      <div class="theme-toggle" role="group" aria-label="主题切换">
+        <button data-theme-set="light" aria-label="亮色主题"><i class="fas fa-sun"></i></button>
+        <button data-theme-set="dim" aria-label="暗淡主题"><i class="fas fa-circle-half-stroke"></i></button>
+        <button data-theme-set="dark" aria-label="深色主题" class="active"><i class="fas fa-moon"></i></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="relative z-10 max-w-6xl mx-auto px-6 pt-14 md:pt-20 pb-16">
+  <div class="hero-spotlight"></div>
+  <div class="grid md:grid-cols-2 gap-12 items-center relative">
+    <div>
+      <div class="mono text-xs mb-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border" style="border-color:var(--border);color:var(--text-muted)">
+        <span class="live-dot"></span><span>接受技术咨询中</span>
+      </div>
+      <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.04] mb-6 tracking-tight">
+        <span class="block">你好，我是</span>
+        <span class="block" style="color:var(--accent)">rencai2912。</span>
+        <span class="block">写代码，也写字。</span>
+      </h1>
+      <p class="text-base md:text-lg mb-8 max-w-md leading-relaxed" style="color:var(--text-muted)">资深工程师，写分布式系统、开发工具，偶尔记录凌晨三点的调试故事。不讲空话，不发水文——只发能跑起来的代码。</p>
+      <div class="flex flex-wrap gap-3">
+        <a href="#articles" class="btn-primary">开始阅读 <i class="fas fa-arrow-right text-xs"></i></a>
+        <a href="#snippets" class="btn-ghost"><i class="fas fa-code"></i> 代码片段</a>
+      </div>
+    </div>
+    <div class="terminal" id="terminal">
+      <div class="terminal-head">
+        <div class="tdot" style="background:#ff5f57"></div>
+        <div class="tdot" style="background:#febc2e"></div>
+        <div class="tdot" style="background:#28c840"></div>
+        <span class="mono text-xs ml-3" style="color:var(--text-muted)">~/dev/blog — zsh</span>
+        <span class="ml-auto mono text-[10px]" style="color:var(--text-muted)">80x24</span>
+      </div>
+      <div class="p-6 mono text-[13px] leading-relaxed min-h-[280px]">
+        <div class="mb-1.5"><span style="color:var(--accent-2)">➜</span> <span style="color:var(--accent)">~</span> whoami</div>
+        <div class="mb-4 pl-4" style="color:var(--text-muted)">rencai2912 — 资深软件工程师</div>
+        <div class="mb-1.5"><span style="color:var(--accent-2)">➜</span> <span style="color:var(--accent)">~</span> <span id="typewriter"></span><span class="cursor-bar"></span></div>
+        <div class="mb-4 pl-4 min-h-[20px]" style="color:var(--text-muted)" id="typewriter-out"></div>
+        <div><span style="color:var(--accent-2)">➜</span> <span style="color:var(--accent)">~</span> <span style="color:var(--text-muted)">_</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="articles" class="relative z-10 max-w-6xl mx-auto px-6 py-16">
+  <div class="flex items-end justify-between mb-8 flex-wrap gap-4">
+    <div>
+      <div class="mono text-xs mb-2" style="color:var(--accent)">// 所有文章</div>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">所有文章</h2>
+    </div>
+  </div>
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+    <article class="article-card reveal" data-article-id="1" tabindex="0">
+      <div class="flex items-center gap-2 mb-4"><span class="tag accent mono"><i class="fas fa-server"></i> 系统</span><span class="mono text-[11px]" style="color:var(--text-muted)">12 分钟</span></div>
+      <h3 class="text-lg font-semibold mb-3 leading-snug">为什么你的分布式锁大概率是错的</h3>
+      <p class="text-sm leading-relaxed mb-6" style="color:var(--text-muted)">深入剖析分布式锁实现的常见误区，以及为什么 Redlock 并不是你想象中的银弹。</p>
+      <div class="flex items-center justify-between mono text-[11px] pt-4 border-t" style="color:var(--text-muted);border-color:var(--border)"><span class="article-date">2026.03.18</span><span class="arrow"><i class="fas fa-arrow-right text-[10px]"></i></span></div>
+    </article>
+    <article class="article-card reveal" data-article-id="2" tabindex="0">
+      <div class="flex items-center gap-2 mb-4"><span class="tag accent mono"><i class="fas fa-terminal"></i> 开发工具</span><span class="mono text-[11px]" style="color:var(--text-muted)">8 分钟</span></div>
+      <h3 class="text-lg font-semibold mb-3 leading-snug">我从零写了个 REPL，你也可以</h3>
+      <p class="text-sm leading-relaxed mb-6" style="color:var(--text-muted)">用 Go 实现一个小巧但功能完整的 REPL，涵盖词法分析、解析与求值。完整代码附后。</p>
+      <div class="flex items-center justify-between mono text-[11px] pt-4 border-t" style="color:var(--text-muted);border-color:var(--border)"><span class="article-date">2026.03.10</span><span class="arrow"><i class="fas fa-arrow-right text-[10px]"></i></span></div>
+    </article>
+    <article class="article-card reveal" data-article-id="3" tabindex="0">
+      <div class="flex items-center gap-2 mb-4"><span class="tag accent mono"><i class="fas fa-bolt"></i> 性能</span><span class="mono text-[11px]" style="color:var(--text-muted)">15 分钟</span></div>
+      <h3 class="text-lg font-semibold mb-3 leading-snug">用 2026 年的方式做 Rust 性能分析</h3>
+      <p class="text-sm leading-relaxed mb-6" style="color:var(--text-muted)">从火焰图到 perf，这是我在生产环境 Rust 服务中排查性能瓶颈的完整工具链。</p>
+      <div class="flex items-center justify-between mono text-[11px] pt-4 border-t" style="color:var(--text-muted);border-color:var(--border)"><span class="article-date">2026.02.28</span><span class="arrow"><i class="fas fa-arrow-right text-[10px]"></i></span></div>
+    </article>
+    <article class="article-card reveal" data-article-id="4" tabindex="0">
+      <div class="flex items-center gap-2 mb-4"><span class="tag accent mono"><i class="fas fa-fire"></i> 观点</span><span class="mono text-[11px]" style="color:var(--text-muted)">6 分钟</span></div>
+      <h3 class="text-lg font-semibold mb-3 leading-snug">微服务？就这经济环境？</h3>
+      <p class="text-sm leading-relaxed mb-6" style="color:var(--text-muted)">务实聊聊什么时候你才真正需要微服务（剧透：大概率还不需要），以及不用它该用什么。</p>
+      <div class="flex items-center justify-between mono text-[11px] pt-4 border-t" style="color:var(--text-muted);border-color:var(--border)"><span class="article-date">2026.02.15</span><span class="arrow"><i class="fas fa-arrow-right text-[10px]"></i></span></div>
+    </article>
+    <article class="article-card reveal" data-article-id="5" tabindex="0">
+      <div class="flex items-center gap-2 mb-4"><span class="tag accent mono"><i class="fas fa-globe"></i> Web</span><span class="mono text-[11px]" style="color:var(--text-muted)">10 分钟</span></div>
+      <h3 class="text-lg font-semibold mb-3 leading-snug">JavaScript 框架的隐性成本</h3>
+      <p class="text-sm leading-relaxed mb-6" style="color:var(--text-muted)">运行时开销显而易见，包体积也肉眼可见，但你不需要的那些抽象层带来的认知负担呢？</p>
+      <div class="flex items-center justify-between mono text-[11px] pt-4 border-t" style="color:var(--text-muted);border-color:var(--border)"><span class="article-date">2026.02.02</span><span class="arrow"><i class="fas fa-arrow-right text-[10px]"></i></span></div>
+    </article>
+    <article class="article-card reveal" data-article-id="6" tabindex="0">
+      <div class="flex items-center gap-2 mb-4"><span class="tag accent mono"><i class="fas fa-database"></i> 数据库</span><span class="mono text-[11px]" style="color:var(--text-muted)">14 分钟</span></div>
+      <h3 class="text-lg font-semibold mb-3 leading-snug">真正能扩展的 Postgres 索引策略</h3>
+      <p class="text-sm leading-relaxed mb-6" style="color:var(--text-muted)">B-tree、GIN、GiST、BRIN——什么时候用哪个？附真实生产负载的基准测试，别再靠猜。</p>
+      <div class="flex items-center justify-between mono text-[11px] pt-4 border-t" style="color:var(--text-muted);border-color:var(--border)"><span class="article-date">2026.01.20</span><span class="arrow"><i class="fas fa-arrow-right text-[10px]"></i></span></div>
+    </article>
+  </div>
+</section>
+
+<section id="snippets" class="relative z-10 max-w-6xl mx-auto px-6 py-16">
+  <div class="grid md:grid-cols-3 gap-8">
+    <div class="md:col-span-1">
+      <div class="mono text-xs mb-2" style="color:var(--accent)">// 本周代码片段</div>
+      <h2 class="text-3xl font-bold mb-4 tracking-tight">复制即用</h2>
+      <p class="mb-6 text-sm leading-relaxed" style="color:var(--text-muted)">来自我日常工具箱的实战代码片段。点击按钮、粘贴、上线。无依赖、无废话。</p>
+      <div class="flex flex-wrap gap-2"><span class="tag mono">rust</span><span class="tag mono">go</span><span class="tag mono">typescript</span><span class="tag mono">python</span><span class="tag mono">sql</span></div>
+    </div>
+    <div class="md:col-span-2 space-y-5">
+      <div class="code-block reveal">
+        <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">retry.go</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">go</span></div>
+        <pre><code><span class="syn-cm">// 带抖动的指数退避 —— 可直接上生产</span>
+<span class="syn-kw">func</span> <span class="syn-fn">Retry</span>[T <span class="syn-kw">any</span>](fn <span class="syn-kw">func</span>() (T, <span class="syn-kw">error</span>), attempts <span class="syn-pr">int</span>) (T, <span class="syn-kw">error</span>) {
+    <span class="syn-kw">var</span> zero T
+    <span class="syn-kw">for</span> i := <span class="syn-nm">0</span>; i &lt; attempts; i++ {
+        result, err := <span class="syn-fn">fn</span>()
+        <span class="syn-kw">if</span> err == <span class="syn-kw">nil</span> { <span class="syn-kw">return</span> result, <span class="syn-kw">nil</span> }
+        delay := time.<span class="syn-fn">Duration</span>(<span class="syn-nm">1</span>&lt;&lt;i) * time.Second
+        delay += time.<span class="syn-fn">Duration</span>(rand.<span class="syn-fn">Intn</span>(<span class="syn-nm">100</span>)) * time.Millisecond
+        time.<span class="syn-fn">Sleep</span>(delay)
+    }
+    <span class="syn-kw">return</span> zero, <span class="syn-fn">fmt</span>.<span class="syn-fn">Errorf</span>(<span class="syn-str">"已超过最大重试次数"</span>)
+}</code></pre>
+        <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+      </div>
+      <div class="code-block reveal">
+        <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">debounce.ts</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">typescript</span></div>
+        <pre><code><span class="syn-cm">// 极简、类型安全的防抖函数 —— 零依赖</span>
+<span class="syn-kw">export function</span> <span class="syn-fn">debounce</span>&lt;T <span class="syn-kw">extends</span> (...args: <span class="syn-pr">any</span>[]) =&gt; <span class="syn-pr">void</span>&gt;(fn: T, ms: <span class="syn-pr">number</span> = <span class="syn-nm">300</span>) {
+  <span class="syn-kw">let</span> timer: <span class="syn-pr">ReturnType</span>&lt;<span class="syn-kw">typeof</span> setTimeout&gt;
+  <span class="syn-kw">return</span> (...args: <span class="syn-pr">Parameters</span>&lt;T&gt;) =&gt; { <span class="syn-fn">clearTimeout</span>(timer); timer = <span class="syn-fn">setTimeout</span>(() =&gt; <span class="syn-fn">fn</span>(...args), ms) }
+}</code></pre>
+        <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="about" class="relative z-10 border-t mt-8" style="border-color:var(--border)">
+  <div class="max-w-6xl mx-auto px-6 py-14">
+    <div class="grid md:grid-cols-2 gap-12">
+      <div>
+        <a href="#" class="logo text-lg">dev.log</a>
+        <p class="text-sm mt-3 leading-relaxed" style="color:var(--text-muted)">rencai2912 的个人博客。写代码、写系统，也写造物时那种安静的快乐。</p>
+        <div class="mono text-[11px] mt-4" style="color:var(--text-muted)">由咖啡与好奇心驱动。</div>
+      </div>
+      <div>
+        <div class="mono text-xs mb-4" style="color:var(--text-muted)">// 联系方式</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+          <a href="https://discord.gg/qA9v2dvG" target="_blank" rel="noopener" class="hover:translate-x-1 transition-transform flex items-center gap-2.5" style="color:var(--text)"><i class="fab fa-discord w-4 text-center" style="color:var(--text-muted)"></i><span class="mono text-xs">discord 服务器</span></a>
+          <a href="mailto:rencai2912@outlook.com" class="hover:translate-x-1 transition-transform flex items-center gap-2.5" style="color:var(--text)"><i class="fas fa-envelope w-4 text-center" style="color:var(--text-muted)"></i><span class="mono text-xs">rencai2912@outlook.com</span></a>
+          <button id="copy-qq" class="hover:translate-x-1 transition-transform flex items-center gap-2.5 text-left" style="color:var(--text)"><i class="fab fa-qq w-4 text-center" style="color:var(--text-muted)"></i><span class="mono text-xs">QQ / 3396859826</span></button>
+        </div>
+        <div class="mono text-[11px] mt-6" style="color:var(--text-muted)">最快回复：Discord · 工作日 9:00–23:00 (GMT+8)</div>
+      </div>
+    </div>
+    <div class="mt-12 pt-6 border-t flex flex-col md:flex-row justify-between gap-3 mono text-[11px]" style="border-color:var(--border);color:var(--text-muted)">
+      <div>© 2026 rencai2912 · 内容保留所有权利</div>
+      <div>$ echo $SHELL → /bin/zsh · 按 <kbd style="border:1px solid var(--border);padding:1px 5px;border-radius:4px">T</kbd> 键切换主题</div>
+    </div>
+  </div>
+</footer>
+
+<div id="article-modal">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <button class="modal-close" id="modal-close-btn" aria-label="关闭"><i class="fas fa-times"></i></button>
+    <div class="article-body" id="article-content-container"></div>
+  </div>
+</div>
+
+<!-- 文章 1 -->
+<template id="article-1">
+  <h1>为什么你的分布式锁大概率是错的</h1>
+  <blockquote><p><strong>核心观点</strong>：分布式锁是一个看似简单实则极其复杂的问题。大多数基于 Redis 的实现都有隐藏的 Bug，只是在特定条件下没有触发而已。Redlock 并不是你想象中的银弹，它在严格的一致性场景下存在理论缺陷。</p></blockquote>
+  <h2>一、分布式锁的核心挑战</h2>
+  <p>在分布式系统中，分布式锁本质上是在追求<strong>强一致性（互斥性）</strong>。但这面临着物理和理论上的多重挑战：</p>
+  <ol>
+    <li><strong>CAP 定理的约束</strong>：在网络分区（P）发生时，必须在一致性（C）和可用性（A）之间做取舍。</li>
+    <li><strong>时钟不同步</strong>：分布式节点之间的物理时钟无法做到绝对同步（NTP 同步有误差，虚拟机/容器时钟会漂移）。</li>
+    <li><strong>进程暂停</strong>：GC 停顿、操作系统调度延迟会导致进程在任意时刻"假死"。</li>
+    <li><strong>网络延迟与丢包</strong>：消息可能在网络中丢失或严重延迟。</li>
+  </ol>
+  <h2>二、常见 Redis 锁实现的致命误区</h2>
+  <h3>❌ 误区 1：非原子的加锁与设置过期时间</h3>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">lock.py</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">python</span></div>
+    <pre><code><span class="syn-cm"># 典型错误实现</span>
+<span class="syn-kw">def</span> <span class="syn-fn">acquire_lock</span>(key, expire_time):
+    result = redis.<span class="syn-fn">setnx</span>(key, value)  <span class="syn-cm"># 步骤 1</span>
+    <span class="syn-kw">if</span> result:
+        redis.<span class="syn-fn">expire</span>(key, expire_time) <span class="syn-cm"># 步骤 2</span>
+    <span class="syn-kw">return</span> result</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p><strong>致命问题</strong>：如果步骤 1 执行后客户端崩溃或网络断开，步骤 2 未执行，该 Key 将<strong>永久不过期</strong>，导致死锁。<br><strong>✅ 正确做法</strong>：使用原子命令 <code>SET key value NX EX expire_time</code>。</p>
+  <h3>❌ 误区 2：误删其他客户端的锁</h3>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">release.py</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">python</span></div>
+    <pre><code><span class="syn-cm"># 释放锁</span>
+<span class="syn-kw">def</span> <span class="syn-fn">release_lock</span>(key, value):
+    <span class="syn-kw">if</span> redis.<span class="syn-fn">get</span>(key) == value:
+        redis.<span class="syn-fn">del</span>(key)</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p><strong>问题场景</strong>：</p>
+  <ol>
+    <li>客户端 A 获取锁，TTL=5s。</li>
+    <li>客户端 A 发生长时间 GC，业务执行了 8s。</li>
+    <li>第 5s 时锁自动过期。</li>
+    <li>客户端 B 获取了同一把锁。</li>
+    <li>客户端 A GC 结束，执行释放锁逻辑。此时 <code>redis.get(key)</code> 拿到的是 B 的 value，A 把 B 的锁删了！</li>
+  </ol>
+  <p><strong>✅ 正确做法</strong>：Value 使用 UUID，并使用 <strong>Lua 脚本</strong> 保证"判断并删除"的原子性。</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">release.lua</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">lua</span></div>
+    <pre><code><span class="syn-cm">-- 安全释放锁的 Lua 脚本</span>
+<span class="syn-kw">if</span> redis.<span class="syn-fn">call</span>(<span class="syn-str">"get"</span>, KEYS[<span class="syn-nm">1</span>]) == ARGV[<span class="syn-nm">1</span>] <span class="syn-kw">then</span>
+    <span class="syn-kw">return</span> redis.<span class="syn-fn">call</span>(<span class="syn-str">"del"</span>, KEYS[<span class="syn-nm">1</span>])
+<span class="syn-kw">else</span>
+    <span class="syn-kw">return</span> <span class="syn-nm">0</span>
+<span class="syn-kw">end</span></code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <h3>❌ 误区 3：忽略锁续期</h3>
+  <p>即使设置了合理的 TTL，长时间任务仍可能超时。如果不引入类似 Redisson 的 Watchdog（看门狗）机制在后台自动续期，锁就会提前释放。但 Watchdog 同样面临客户端彻底宕机导致锁无法释放的风险。</p>
+  <h2>三、Redlock：被高估的"银弹"</h2>
+  <p>为了解决单点 Redis 锁在主从切换时丢失的问题，Redis 作者 antirez 提出了 <strong>Redlock</strong> 算法。</p>
+  <h3>Redlock 算法简述</h3>
+  <ol>
+    <li>获取当前时间戳 <code>T1</code>。</li>
+    <li>依次向 <code>N</code> 个独立的 Redis 节点请求锁（使用相同的 Key 和 Value，设置较短的超时时间）。</li>
+    <li>计算获取锁花费的时间。只有当<strong>超过半数（<code>N/2 + 1</code>）</strong> 的节点加锁成功，且总耗时小于锁的有效期时，才认为加锁成功。</li>
+    <li>实际有效时间 = 锁的 TTL - 获取锁耗时。</li>
+    <li>如果失败，向所有节点发送释放锁请求。</li>
+  </ol>
+  <h3>🔴 Redlock 的致命缺陷</h3>
+  <h4>1. 时钟漂移假设不成立</h4>
+  <p>Redlock 强依赖一个假设：<strong>所有 Redis 节点的时钟是同步的，且时钟跳跃幅度远小于锁的 TTL</strong>。现实中，虚拟机时钟跳跃、NTP 同步失败都可能导致某个节点时钟突然向前跳跃，导致锁提前过期，破坏互斥性。</p>
+  <h4>2. 进程暂停</h4>
+  <p>这是 Martin Kleppmann 提出的最致命攻击：</p>
+  <ol>
+    <li>客户端 A 向多数节点成功申请了锁。</li>
+    <li>在 Redlock 客户端记录获取锁成功之前，发生了<strong>长时间的 Full GC</strong>（或网络延迟）。</li>
+    <li>此时锁在所有 Redis 节点上已经过期。</li>
+    <li>客户端 B 成功获取了锁。</li>
+    <li>客户端 A GC 结束，认为自己成功获取了锁。</li>
+  </ol>
+  <p><strong>结果：A 和 B 同时认为自己持有锁，互斥性被打破。</strong></p>
+  <h4>3. 缺乏 Fencing Token（防劣化令牌）机制</h4>
+  <p>在严格的分布式系统中，防止旧锁持有者破坏数据的标准做法是使用 Fencing Token（单调递增的序号）。</p>
+  <ul>
+    <li>ZK/Etcd 的每次会话或事务都有递增的 <code>zxid</code> 或 <code>revision</code>。</li>
+    <li>存储系统可以拒绝较小 Token 的写入请求。</li>
+    <li><strong>Redlock 无法提供 Fencing Token</strong>，因此无法从根本上防止上述 GC 暂停导致的数据覆盖问题。</li>
+  </ul>
+  <h4>4. 网络分区下的脑裂风险</h4>
+  <p>如果发生网络分区，客户端可能在不同分区获取到不同节点的锁，虽然 Redlock 要求多数派，但在特定的网络延迟和节点重启组合下，仍存在极小概率的并发获取成功。</p>
+  <h2>四、antirez vs Martin Kleppmann 的经典辩论</h2>
+  <p>这场辩论是分布式系统领域的经典案例，揭示了两种不同的设计哲学：</p>
+  <table>
+    <thead><tr><th>维度</th><th>antirez (Redis 作者)</th><th>Martin Kleppmann (《DERTA》作者)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>核心观点</strong></td><td>Redlock 在合理假设下是安全的，适用于大多数工程场景。</td><td>Redlock 在理论上是不安全的，不能作为真正的分布式锁。</td></tr>
+      <tr><td><strong>对时钟的假设</strong></td><td>假设系统管理员会配置好 NTP，避免大幅度时钟跳跃。</td><td>分布式系统不能依赖"管理员配置正确"这种外部假设，必须从算法层面保证安全。</td></tr>
+      <tr><td><strong>对 GC 的看法</strong></td><td>可以通过设置足够长的 TTL 和合理的超时时间来缓解。</td><td>带有 GC 的语言中，任何基于超时的算法都是不可靠的，必须引入 Fencing Token。</td></tr>
+      <tr><td><strong>适用场景建议</strong></td><td>效率优先、可容忍极小概率失败的场景（如防止重复发送短信）。</td><td>需要严格互斥、绝不能出错的场景（如金融扣款）。</td></tr>
+    </tbody>
+  </table>
+  <p><strong>结论</strong>：antirez 最终也承认，如果需要严格的互斥性，应该使用 ZooKeeper 或 Etcd。Redlock 更多是一种"尽力而为"的优化，而非严格的分布式锁。</p>
+  <h2>五、真正可靠的分布式锁方案</h2>
+  <p>如果你需要<strong>严格的一致性</strong>和<strong>真正的互斥</strong>，请放弃 Redis，选择基于共识算法的组件。</p>
+  <h3>✅ 方案 1：ZooKeeper</h3>
+  <ul>
+    <li><strong>原理</strong>：基于 ZAB 协议。利用<strong>临时顺序节点</strong>实现锁。</li>
+    <li><strong>优势</strong>：强一致性；天然提供 Fencing Token（<code>czxid</code>）；客户端宕机会话断开，临时节点自动删除，不会死锁。</li>
+    <li><strong>劣势</strong>：性能相对较低，不适合极高并发的锁竞争；运维较重。</li>
+  </ul>
+  <h3>✅ 方案 2：Etcd</h3>
+  <ul>
+    <li><strong>原理</strong>：基于 Raft 协议。利用 <strong>Lease（租约）</strong> 和 <strong>事务</strong> 实现。</li>
+    <li><strong>优势</strong>：强一致性；API 更现代；天然提供 Fencing Token（<code>revision</code>）。</li>
+    <li><strong>劣势</strong>：同 ZooKeeper，性能不及 Redis。</li>
+  </ul>
+  <h3>✅ 方案 3：数据库乐观锁 / 唯一索引</h3>
+  <ul>
+    <li><strong>原理</strong>：利用数据库的行锁或唯一约束。</li>
+    <li><strong>适用场景</strong>：并发量不高，或者可以通过业务状态机流转来避免直接加锁的场景。</li>
+  </ul>
+  <h2>六、决策指南：你应该怎么选？</h2>
+  <p>在动手写代码前，请问自己三个问题：</p>
+  <h3>1. 锁失败的代价是什么？</h3>
+  <ul>
+    <li><strong>灾难性（数据损坏、资金损失）</strong> → <strong>必须使用 ZooKeeper / Etcd</strong>。</li>
+    <li><strong>可接受（重复发短信、缓存多刷新一次）</strong> → <strong>可以使用 Redis 单节点锁或 Redlock</strong>。</li>
+  </ul>
+  <h3>2. 业务是否具备幂等性？</h3>
+  <ul>
+    <li>如果业务本身是幂等的（如基于唯一流水号的插入），<strong>你根本不需要分布式锁</strong>，直接依赖数据库唯一索引或业务层去重即可。</li>
+    <li>锁只是性能优化手段，不应作为数据一致性的最后防线。</li>
+  </ul>
+  <h3>3. 并发竞争有多激烈？</h3>
+  <ul>
+    <li><strong>高频竞争</strong> → Redis 性能最好，但需接受其一致性妥协。</li>
+    <li><strong>低频竞争</strong> → ZooKeeper / Etcd 的性能完全足够，且能保证强一致。</li>
+  </ul>
+  <h2>七、最佳实践总结</h2>
+  <ol>
+    <li><strong>能不锁就不锁</strong>：优先考虑无锁设计、消息队列串行化、数据库乐观锁。</li>
+    <li><strong>锁的粒度越细越好</strong>：避免大范围的锁，只锁必要的资源。</li>
+    <li><strong>锁的持有时间越短越好</strong>：将耗时的 I/O 或计算移出锁的范围。</li>
+    <li><strong>始终假设锁会失效</strong>：在业务层做好兜底，比如引入版本号或依赖数据库的唯一约束。</li>
+    <li><strong>规范 Redis 锁的使用</strong>：如果必须用 Redis，请务必使用 <code>SET NX EX</code> 原子命令，使用 Lua 脚本释放锁，并引入 Watchdog 续期机制（推荐直接使用 Redisson 等成熟客户端）。</li>
+  </ol>
+  <hr>
+  <blockquote><p><strong>结语</strong>：分布式系统没有银弹。理解 Redlock 的局限性，认清 CAP 定理的边界，根据业务对一致性的真实容忍度去选择技术方案，才是架构设计的核心所在。</p></blockquote>
+</template>
+
+<!-- 文章 2 -->
+<template id="article-2">
+  <h1>我从零写了个 REPL，你也可以</h1>
+  <p>每次打开 Python、Node.js 或者 Elixir 的终端，输入一行代码并立刻看到结果时，你是否好奇过这背后发生了什么？REPL（Read-Eval-Print Loop，读取-求值-打印循环）看起来像魔法，但实际上，只要你掌握了编译原理的基础知识，从零写一个功能完整的 REPL 并不难。</p>
+  <p>今天，我将带你用 Go 语言从零开始实现一个小巧但功能完整的 REPL。它支持整数的加减乘除和括号运算，涵盖了<strong>词法分析</strong>、<strong>语法解析（生成 AST）</strong>和<strong>求值</strong>三个完整的步骤。</p>
+  <p>准备好了吗？让我们剥开魔法的神秘外衣！</p>
+  <h2>什么是 REPL？</h2>
+  <p>REPL 是一个交互式环境，它的工作流就像一个死循环，不断执行以下四个步骤：</p>
+  <ol>
+    <li><strong>Read (读取)</strong>：从标准输入读取用户输入的一行代码。</li>
+    <li><strong>Eval (求值)</strong>：对输入的代码进行解析并计算结果。</li>
+    <li><strong>Print (打印)</strong>：将计算结果输出到终端。</li>
+    <li><strong>Loop (循环)</strong>：回到第一步，等待下一次输入。</li>
+  </ol>
+  <p>为了实现 <code>Eval</code>，我们需要经历两个子步骤：把字符串变成机器能懂的"词法单元"，然后根据这些单元构建出"抽象语法树"，最后遍历这棵树得出结果。</p>
+  <h2>第一步：词法分析</h2>
+  <p>机器是不懂 <code>1 + 2 * 3</code> 这种字符串的，我们需要把它切分成一个个有意义的词法单元，也就是 Token。</p>
+  <p>比如，<code>1 + 2</code> 会被切分为：<code>NUMBER(1)</code>, <code>PLUS(+)</code>, <code>NUMBER(2)</code>。</p>
+  <p>在 Go 中，我们定义一个 <code>Lexer</code> 结构体，逐个字符地扫描输入字符串：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">lexer.go</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">go</span></div>
+    <pre><code><span class="syn-kw">type</span> <span class="syn-pr">TokenType</span> <span class="syn-kw">string</span>
+
+<span class="syn-kw">const</span> (
+    <span class="syn-pr">TokenEOF</span>    <span class="syn-pr">TokenType</span> = <span class="syn-str">"EOF"</span>
+    <span class="syn-pr">TokenNumber</span> <span class="syn-pr">TokenType</span> = <span class="syn-str">"NUMBER"</span>
+    <span class="syn-pr">TokenPlus</span>   <span class="syn-pr">TokenType</span> = <span class="syn-str">"+"</span>
+    <span class="syn-cm">// ... 省略其他符号</span>
+)
+
+<span class="syn-kw">type</span> <span class="syn-pr">Token</span> <span class="syn-kw">struct</span> {
+    <span class="syn-pr">Type</span>  <span class="syn-pr">TokenType</span>
+    <span class="syn-pr">Value</span> <span class="syn-kw">string</span>
+}
+
+<span class="syn-kw">type</span> <span class="syn-pr">Lexer</span> <span class="syn-kw">struct</span> {
+    <span class="syn-pr">input</span> <span class="syn-kw">string</span>
+    <span class="syn-pr">pos</span>   <span class="syn-kw">int</span>
+}
+
+<span class="syn-cm">// NextToken 不断吐出下一个 Token</span>
+<span class="syn-kw">func</span> (l *<span class="syn-pr">Lexer</span>) <span class="syn-fn">NextToken</span>() <span class="syn-pr">Token</span> {
+    <span class="syn-cm">// 1. 跳过空白字符</span>
+    <span class="syn-cm">// 2. 如果是数字，连续读取直到非数字，返回 TokenNumber</span>
+    <span class="syn-cm">// 3. 如果是操作符 + - * / ( )，返回对应的 Token</span>
+    <span class="syn-cm">// 4. 遇到未知字符，抛出异常</span>
+}</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p><em>这一步就像是我们读英文句子时，把字母组合成一个个单词。</em></p>
+  <h2>第二步：语法解析</h2>
+  <p>有了 Token 之后，我们需要理解这些 Token 组合起来的含义。比如 <code>1 + 2 * 3</code>，我们要知道 <code>*</code> 的优先级高于 <code>+</code>。</p>
+  <p>这里我们使用<strong>递归下降算法</strong>，将输入构建成一棵<strong>抽象语法树（AST）</strong>。</p>
+  <p>为了处理优先级，我们将语法分为三层：</p>
+  <ol>
+    <li><code>parseExpression</code>：处理最低优先级的 <code>+</code> 和 <code>-</code>。</li>
+    <li><code>parseTerm</code>：处理高优先级的 <code>*</code> 和 <code>/</code>。</li>
+    <li><code>parseFactor</code>：处理最高优先级的数字和括号 <code>()</code>。</li>
+  </ol>
+  <p>比如表达式 <code>(1 + 2) * 3</code>，会被解析成这样的树：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">ast.txt</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">text</span></div>
+    <pre><code>      *
+     / \
+    +   3
+   / \
+  1   2</code></pre>
+    <div class="sweep"></div>
+  </div>
+  <p>代码实现如下：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">parser.go</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">go</span></div>
+    <pre><code><span class="syn-cm">// AST 节点接口</span>
+<span class="syn-kw">type</span> <span class="syn-pr">ASTNode</span> <span class="syn-kw">interface</span> {
+    <span class="syn-fn">Eval</span>() <span class="syn-kw">int</span>
+}
+
+<span class="syn-cm">// 数字节点</span>
+<span class="syn-kw">type</span> <span class="syn-pr">NumberNode</span> <span class="syn-kw">struct</span> {
+    <span class="syn-pr">Value</span> <span class="syn-kw">int</span>
+}
+
+<span class="syn-cm">// 二元操作节点 (如 1 + 2)</span>
+<span class="syn-kw">type</span> <span class="syn-pr">BinOpNode</span> <span class="syn-kw">struct</span> {
+    <span class="syn-pr">Left</span>  <span class="syn-pr">ASTNode</span>
+    <span class="syn-pr">Op</span>    <span class="syn-pr">Token</span>
+    <span class="syn-pr">Right</span> <span class="syn-pr">ASTNode</span>
+}
+
+<span class="syn-cm">// Parser 解析器</span>
+<span class="syn-kw">type</span> <span class="syn-pr">Parser</span> <span class="syn-kw">struct</span> {
+    <span class="syn-pr">lexer</span> *<span class="syn-pr">Lexer</span>
+    <span class="syn-pr">cur</span>   <span class="syn-pr">Token</span>
+}
+
+<span class="syn-cm">// parseExpression: Expr -> Term (('+' | '-') Term)*</span>
+<span class="syn-cm">// parseTerm:      Term -> Factor (('*' | '/') Factor)*</span>
+<span class="syn-cm">// parseFactor:   Factor -> NUMBER | '(' Expr ')'</span></code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p><em>通过递归调用这三个函数，我们能完美地处理数学运算的优先级和结合性。</em></p>
+  <h2>第三步：求值</h2>
+  <p>有了 AST，求值就变得非常简单和优雅。我们只需要从树的根节点开始，递归地调用 <code>Eval()</code> 方法。</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">eval.go</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">go</span></div>
+    <pre><code><span class="syn-kw">func</span> (n *<span class="syn-pr">NumberNode</span>) <span class="syn-fn">Eval</span>() <span class="syn-kw">int</span> {
+    <span class="syn-kw">return</span> n.<span class="syn-pr">Value</span> <span class="syn-cm">// 数字节点直接返回值</span>
+}
+
+<span class="syn-kw">func</span> (n *<span class="syn-pr">BinOpNode</span>) <span class="syn-fn">Eval</span>() <span class="syn-kw">int</span> {
+    <span class="syn-pr">left</span> := n.<span class="syn-pr">Left</span>.<span class="syn-fn">Eval</span>()   <span class="syn-cm">// 递归求左子树</span>
+    <span class="syn-pr">right</span> := n.<span class="syn-pr">Right</span>.<span class="syn-fn">Eval</span>() <span class="syn-cm">// 递归求右子树</span>
+
+    <span class="syn-kw">switch</span> n.<span class="syn-pr">Op</span>.<span class="syn-pr">Type</span> {
+    <span class="syn-kw">case</span> <span class="syn-pr">TokenPlus</span>:
+        <span class="syn-kw">return</span> <span class="syn-pr">left</span> + <span class="syn-pr">right</span>
+    <span class="syn-kw">case</span> <span class="syn-pr">TokenMinus</span>:
+        <span class="syn-kw">return</span> <span class="syn-pr">left</span> - <span class="syn-pr">right</span>
+    <span class="syn-kw">case</span> <span class="syn-pr">TokenStar</span>:
+        <span class="syn-kw">return</span> <span class="syn-pr">left</span> * <span class="syn-pr">right</span>
+    <span class="syn-kw">case</span> <span class="syn-pr">TokenSlash</span>:
+        <span class="syn-kw">if</span> <span class="syn-pr">right</span> == <span class="syn-nm">0</span> { <span class="syn-fn">panic</span>(<span class="syn-str">"除数不能为 0"</span>) }
+        <span class="syn-kw">return</span> <span class="syn-pr">left</span> / <span class="syn-pr">right</span>
+    }
+    <span class="syn-fn">panic</span>(<span class="syn-str">"未知操作符"</span>)
+}</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <h2>第四步：组合 REPL 主循环</h2>
+  <p>最后，我们把上面三个组件组装到经典的 <code>for</code> 循环中，并加上输入输出和错误处理。</p>
+  <p>这里有一个关键细节：我们使用了 <code>defer</code> 和 <code>recover()</code> 来捕获解析和求值阶段产生的 <code>panic</code>。这样即使用户输入了错误的表达式（比如 <code>1 / 0</code> 或 <code>1 +</code>），REPL 也只是提示错误，而不会直接崩溃退出。</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">main.go</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">go</span></div>
+    <pre><code><span class="syn-kw">func</span> <span class="syn-fn">main</span>() {
+    <span class="syn-pr">fmt</span>.<span class="syn-fn">Println</span>(<span class="syn-str">"Go 语言微型 REPL (输入 'exit' 退出)"</span>)
+    <span class="syn-pr">scanner</span> := <span class="syn-pr">bufio</span>.<span class="syn-fn">NewScanner</span>(<span class="syn-pr">os</span>.<span class="syn-pr">Stdin</span>)
+
+    <span class="syn-kw">for</span> {
+        <span class="syn-pr">fmt</span>.<span class="syn-fn">Print</span>(<span class="syn-str">"&gt;&gt; "</span>)
+        <span class="syn-kw">if</span> !<span class="syn-pr">scanner</span>.<span class="syn-fn">Scan</span>() { <span class="syn-kw">break</span> }
+
+        <span class="syn-pr">line</span> := <span class="syn-pr">strings</span>.<span class="syn-fn">TrimSpace</span>(<span class="syn-pr">scanner</span>.<span class="syn-fn">Text</span>())
+        <span class="syn-kw">if</span> <span class="syn-pr">line</span> == <span class="syn-str">"exit"</span> { <span class="syn-kw">break</span> }
+
+        <span class="syn-kw">func</span>() {
+            <span class="syn-kw">defer</span> <span class="syn-kw">func</span>() {
+                <span class="syn-kw">if</span> <span class="syn-pr">err</span> := <span class="syn-fn">recover</span>(); <span class="syn-pr">err</span> != <span class="syn-kw">nil</span> {
+                    <span class="syn-pr">fmt</span>.<span class="syn-fn">Printf</span>(<span class="syn-str">"Error: %v\n"</span>, <span class="syn-pr">err</span>) <span class="syn-cm">// 优雅地捕获错误</span>
+                }
+            }()
+
+            <span class="syn-pr">lexer</span> := <span class="syn-fn">NewLexer</span>(<span class="syn-pr">line</span>)
+            <span class="syn-pr">parser</span> := <span class="syn-fn">NewParser</span>(<span class="syn-pr">lexer</span>)
+            <span class="syn-pr">ast</span> := <span class="syn-pr">parser</span>.<span class="syn-fn">Parse</span>()
+            <span class="syn-pr">result</span> := <span class="syn-pr">ast</span>.<span class="syn-fn">Eval</span>()
+
+            <span class="syn-pr">fmt</span>.<span class="syn-fn">Printf</span>(<span class="syn-str">"=&gt; %d\n"</span>, <span class="syn-pr">result</span>)
+        }()
+    }
+}</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <h2>运行效果</h2>
+  <p>将代码跑起来，你就得到了一个全功能的交互式计算器：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-terminal text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">terminal</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">bash</span></div>
+    <pre><code>Go 语言微型 REPL (输入 'exit' 退出)
+&gt;&gt; 1 + 2 * 3
+=&gt; 7
+&gt;&gt; (1 + 2) * 3
+=&gt; 9
+&gt;&gt; 10 / 0
+Error: 除数不能为 0
+&gt;&gt; exit</code></pre>
+    <div class="sweep"></div>
+  </div>
+  <h2>总结与下一步</h2>
+  <p>不到 200 行 Go 代码，我们就实现了一个功能完整的 REPL。在这个过程中，我们接触了编译器前端的三个核心概念：词法分析、语法分析（AST）和遍历求值。</p>
+  <p>这只是一个开始。如果你想继续扩展这个 REPL，可以尝试以下挑战：</p>
+  <ol>
+    <li><strong>支持浮点数</strong>：修改 Lexer 和 Parser，让其支持 <code>float64</code>。</li>
+    <li><strong>支持变量绑定</strong>：比如输入 <code>let x = 10</code>，然后输入 <code>x + 5</code> 能得出 15。这需要引入环境/作用域的概念。</li>
+    <li><strong>支持字符串处理</strong>：让 <code>+</code> 能拼接字符串。</li>
+  </ol>
+  <p>完整代码附后，你可以直接复制到本地的 <code>main.go</code> 文件中运行体验：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">full_source.go</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">go</span></div>
+    <pre><code><span class="syn-kw">package</span> main
+
+<span class="syn-kw">import</span> (
+    <span class="syn-str">"bufio"</span>
+    <span class="syn-str">"fmt"</span>
+    <span class="syn-str">"os"</span>
+    <span class="syn-str">"strconv"</span>
+    <span class="syn-str">"strings"</span>
+)
+
+<span class="syn-cm">// ==========================================</span>
+<span class="syn-cm">// 1. 词法分析</span>
+<span class="syn-cm">// ==========================================</span>
+
+<span class="syn-kw">type</span> <span class="syn-pr">TokenType</span> <span class="syn-kw">string</span>
+
+<span class="syn-kw">const</span> (
+    <span class="syn-pr">TokenEOF</span>    <span class="syn-pr">TokenType</span> = <span class="syn-str">"EOF"</span>
+    <span class="syn-pr">TokenNumber</span> <span class="syn-pr">TokenType</span> = <span class="syn-str">"NUMBER"</span>
+    <span class="syn-pr">TokenPlus</span>   <span class="syn-pr">TokenType</span> = <span class="syn-str">"+"</span>
+    <span class="syn-pr">TokenMinus</span>  <span class="syn-pr">TokenType</span> = <span class="syn-str">"-"</span>
+    <span class="syn-pr">TokenStar</span>   <span class="syn-pr">TokenType</span> = <span class="syn-str">"*"</span>
+    <span class="syn-pr">TokenSlash</span>  <span class="syn-pr">TokenType</span> = <span class="syn-str">"/"</span>
+    <span class="syn-pr">TokenLParen</span> <span class="syn-pr">TokenType</span> = <span class="syn-str">"("</span>
+    <span class="syn-pr">TokenRParen</span> <span class="syn-pr">TokenType</span> = <span class="syn-str">")"</span>
+)
+
+<span class="syn-kw">type</span> <span class="syn-pr">Token</span> <span class="syn-kw">struct</span> {
+    <span class="syn-pr">Type</span>  <span class="syn-pr">TokenType</span>
+    <span class="syn-pr">Value</span> <span class="syn-kw">string</span>
+}
+
+<span class="syn-kw">type</span> <span class="syn-pr">Lexer</span> <span class="syn-kw">struct</span> {
+    <span class="syn-pr">input</span> <span class="syn-kw">string</span>
+    <span class="syn-pr">pos</span>   <span class="syn-kw">int</span>
+}
+
+<span class="syn-kw">func</span> <span class="syn-fn">NewLexer</span>(<span class="syn-pr">input</span> <span class="syn-kw">string</span>) *<span class="syn-pr">Lexer</span> {
+    <span class="syn-kw">return</span> &<span class="syn-pr">Lexer</span>{<span class="syn-pr">input</span>: <span class="syn-pr">input</span>}
+}
+
+<span class="syn-kw">func</span> (l *<span class="syn-pr">Lexer</span>) <span class="syn-fn">NextToken</span>() <span class="syn-pr">Token</span> {
+    <span class="syn-kw">for</span> l.<span class="syn-pr">pos</span> &lt; <span class="syn-fn">len</span>(l.<span class="syn-pr">input</span>) &amp;&amp; (l.<span class="syn-pr">input</span>[l.<span class="syn-pr">pos</span>] == <span class="syn-str">' '</span> || l.<span class="syn-pr">input</span>[l.<span class="syn-pr">pos</span>] == <span class="syn-str">'\t'</span> || l.<span class="syn-pr">input</span>[l.<span class="syn-pr">pos</span>] == <span class="syn-str">'\n'</span> || l.<span class="syn-pr">input</span>[l.<span class="syn-pr">pos</span>] == <span class="syn-str">'\r'</span>) {
+        l.<span class="syn-pr">pos</span>++
+    }
+
+    <span class="syn-kw">if</span> l.<span class="syn-pr">pos</span> &gt;= <span class="syn-fn">len</span>(l.<span class="syn-pr">input</span>) {
+        <span class="syn-kw">return</span> <span class="syn-pr">Token</span>{<span class="syn-pr">Type</span>: <span class="syn-pr">TokenEOF</span>}
+    }
+
+    <span class="syn-pr">ch</span> := l.<span class="syn-pr">input</span>[l.<span class="syn-pr">pos</span>]
+
+    <span class="syn-kw">switch</span> <span class="syn-pr">ch</span> {
+    <span class="syn-kw">case</span> <span class="syn-str">'+'</span>:
+        l.<span class="syn-pr">pos</span>++
+        <span class="syn-kw">return</span> <span class="syn-pr">Token</span>{<span class="syn-pr">Type</span>: <span class="syn-pr">TokenPlus</span>, <span class="syn-pr">Value</span>: <span class="syn-str">"+"</span>}
+    <span class="syn-kw">case</span> <span class="syn-str">'-'</span>:
+        l.<span class="syn-pr">pos</span>++
+        <span class="syn-kw">return</span> <span class="syn-pr">Token</span>{<span class="syn-pr">Type</span>: <span class="syn-pr">TokenMinus</span>, <span class="syn-pr">Value</span>: <span class="syn-str">"-"</span>}
+    <span class="syn-kw">case</span> <span class="syn-str">'*'</span>:
+        l.<span class="syn-pr">pos</span>++
+        <span class="syn-kw">return</span> <span class="syn-pr">Token</span>{<span class="syn-pr">Type</span>: <span class="syn-pr">TokenStar</span>, <span class="syn-pr">Value</span>: <span class="syn-str">"*"</span>}
+    <span class="syn-kw">case</span> <span class="syn-str">'/'</span>:
+        l.<span class="syn-pr">pos</span>++
+        <span class="syn-kw">return</span> <span class="syn-pr">Token</span>{<span class="syn-pr">Type</span>: <span class="syn-pr">TokenSlash</span>, <span class="syn-pr">Value</span>: <span class="syn-str">"/"</span>}
+    <span class="syn-kw">case</span> <span class="syn-str">'('</span>:
+        l.<span class="syn-pr">pos</span>++
+        <span class="syn-kw">return</span> <span class="syn-pr">Token</span>{<span class="syn-pr">Type</span>: <span class="syn-pr">TokenLParen</span>, <span class="syn-pr">Value</span>: <span class="syn-str">"("</span>}
+    <span class="syn-kw">case</span> <span class="syn-str">')'</span>:
+        l.<span class="syn-pr">pos</span>++
+        <span class="syn-kw">return</span> <span class="syn-pr">Token</span>{<span class="syn-pr">Type</span>: <span class="syn-pr">TokenRParen</span>, <span class="syn-pr">Value</span>: <span class="syn-str">")"</span>}
+    <span class="syn-kw">default</span>:
+        <span class="syn-kw">if</span> <span class="syn-pr">ch</span> &gt;= <span class="syn-str">'0'</span> &amp;&amp; <span class="syn-pr">ch</span> &lt;= <span class="syn-str">'9'</span> {
+            <span class="syn-pr">start</span> := l.<span class="syn-pr">pos</span>
+            <span class="syn-kw">for</span> l.<span class="syn-pr">pos</span> &lt; <span class="syn-fn">len</span>(l.<span class="syn-pr">input</span>) &amp;&amp; l.<span class="syn-pr">input</span>[l.<span class="syn-pr">pos</span>] &gt;= <span class="syn-str">'0'</span> &amp;&amp; l.<span class="syn-pr">input</span>[l.<span class="syn-pr">pos</span>] &lt;= <span class="syn-str">'9'</span> {
+                l.<span class="syn-pr">pos</span>++
+            }
+            <span class="syn-kw">return</span> <span class="syn-pr">Token</span>{<span class="syn-pr">Type</span>: <span class="syn-pr">TokenNumber</span>, <span class="syn-pr">Value</span>: l.<span class="syn-pr">input</span>[<span class="syn-pr">start</span>:l.<span class="syn-pr">pos</span>]}
+        }
+    }
+
+    <span class="syn-fn">panic</span>(<span class="syn-pr">fmt</span>.<span class="syn-fn">Sprintf</span>(<span class="syn-str">"未知字符: %c"</span>, <span class="syn-pr">ch</span>))
+}
+
+<span class="syn-cm">// ==========================================</span>
+<span class="syn-cm">// 2. 解析器 - 生成 AST</span>
+<span class="syn-cm">// ==========================================</span>
+
+<span class="syn-kw">type</span> <span class="syn-pr">ASTNode</span> <span class="syn-kw">interface</span> {
+    <span class="syn-fn">Eval</span>() <span class="syn-kw">int</span>
+}
+
+<span class="syn-kw">type</span> <span class="syn-pr">NumberNode</span> <span class="syn-kw">struct</span> {
+    <span class="syn-pr">Value</span> <span class="syn-kw">int</span>
+}
+
+<span class="syn-kw">func</span> (n *<span class="syn-pr">NumberNode</span>) <span class="syn-fn">Eval</span>() <span class="syn-kw">int</span> {
+    <span class="syn-kw">return</span> n.<span class="syn-pr">Value</span>
+}
+
+<span class="syn-kw">type</span> <span class="syn-pr">BinOpNode</span> <span class="syn-kw">struct</span> {
+    <span class="syn-pr">Left</span>  <span class="syn-pr">ASTNode</span>
+    <span class="syn-pr">Op</span>    <span class="syn-pr">Token</span>
+    <span class="syn-pr">Right</span> <span class="syn-pr">ASTNode</span>
+}
+
+<span class="syn-kw">func</span> (n *<span class="syn-pr">BinOpNode</span>) <span class="syn-fn">Eval</span>() <span class="syn-kw">int</span> {
+    <span class="syn-pr">left</span> := n.<span class="syn-pr">Left</span>.<span class="syn-fn">Eval</span>()
+    <span class="syn-pr">right</span> := n.<span class="syn-pr">Right</span>.<span class="syn-fn">Eval</span>()
+
+    <span class="syn-kw">switch</span> n.<span class="syn-pr">Op</span>.<span class="syn-pr">Type</span> {
+    <span class="syn-kw">case</span> <span class="syn-pr">TokenPlus</span>:
+        <span class="syn-kw">return</span> <span class="syn-pr">left</span> + <span class="syn-pr">right</span>
+    <span class="syn-kw">case</span> <span class="syn-pr">TokenMinus</span>:
+        <span class="syn-kw">return</span> <span class="syn-pr">left</span> - <span class="syn-pr">right</span>
+    <span class="syn-kw">case</span> <span class="syn-pr">TokenStar</span>:
+        <span class="syn-kw">return</span> <span class="syn-pr">left</span> * <span class="syn-pr">right</span>
+    <span class="syn-kw">case</span> <span class="syn-pr">TokenSlash</span>:
+        <span class="syn-kw">if</span> <span class="syn-pr">right</span> == <span class="syn-nm">0</span> {
+            <span class="syn-fn">panic</span>(<span class="syn-str">"除数不能为 0"</span>)
+        }
+        <span class="syn-kw">return</span> <span class="syn-pr">left</span> / <span class="syn-pr">right</span>
+    }
+    <span class="syn-fn">panic</span>(<span class="syn-str">"未知操作符"</span>)
+}
+
+<span class="syn-kw">type</span> <span class="syn-pr">Parser</span> <span class="syn-kw">struct</span> {
+    <span class="syn-pr">lexer</span> *<span class="syn-pr">Lexer</span>
+    <span class="syn-pr">cur</span>   <span class="syn-pr">Token</span>
+}
+
+<span class="syn-kw">func</span> <span class="syn-fn">NewParser</span>(<span class="syn-pr">lexer</span> *<span class="syn-pr">Lexer</span>) *<span class="syn-pr">Parser</span> {
+    <span class="syn-pr">p</span> := &<span class="syn-pr">Parser</span>{<span class="syn-pr">lexer</span>: <span class="syn-pr">lexer</span>}
+    <span class="syn-pr">p</span>.<span class="syn-pr">cur</span> = <span class="syn-pr">p</span>.<span class="syn-pr">lexer</span>.<span class="syn-fn">NextToken</span>()
+    <span class="syn-kw">return</span> <span class="syn-pr">p</span>
+}
+
+<span class="syn-kw">func</span> (p *<span class="syn-pr">Parser</span>) <span class="syn-fn">advance</span>() {
+    p.<span class="syn-pr">cur</span> = p.<span class="syn-pr">lexer</span>.<span class="syn-fn">NextToken</span>()
+}
+
+<span class="syn-kw">func</span> (p *<span class="syn-pr">Parser</span>) <span class="syn-fn">Parse</span>() <span class="syn-pr">ASTNode</span> {
+    <span class="syn-kw">return</span> p.<span class="syn-fn">parseExpression</span>()
+}
+
+<span class="syn-kw">func</span> (p *<span class="syn-pr">Parser</span>) <span class="syn-fn">parseExpression</span>() <span class="syn-pr">ASTNode</span> {
+    <span class="syn-pr">node</span> := p.<span class="syn-fn">parseTerm</span>()
+
+    <span class="syn-kw">for</span> p.<span class="syn-pr">cur</span>.<span class="syn-pr">Type</span> == <span class="syn-pr">TokenPlus</span> || p.<span class="syn-pr">cur</span>.<span class="syn-pr">Type</span> == <span class="syn-pr">TokenMinus</span> {
+        <span class="syn-pr">op</span> := p.<span class="syn-pr">cur</span>
+        p.<span class="syn-fn">advance</span>()
+        <span class="syn-pr">right</span> := p.<span class="syn-fn">parseTerm</span>()
+        <span class="syn-pr">node</span> = &<span class="syn-pr">BinOpNode</span>{<span class="syn-pr">Left</span>: <span class="syn-pr">node</span>, <span class="syn-pr">Op</span>: <span class="syn-pr">op</span>, <span class="syn-pr">Right</span>: <span class="syn-pr">right</span>}
+    }
+
+    <span class="syn-kw">return</span> <span class="syn-pr">node</span>
+}
+
+<span class="syn-kw">func</span> (p *<span class="syn-pr">Parser</span>) <span class="syn-fn">parseTerm</span>() <span class="syn-pr">ASTNode</span> {
+    <span class="syn-pr">node</span> := p.<span class="syn-fn">parseFactor</span>()
+
+    <span class="syn-kw">for</span> p.<span class="syn-pr">cur</span>.<span class="syn-pr">Type</span> == <span class="syn-pr">TokenStar</span> || p.<span class="syn-pr">cur</span>.<span class="syn-pr">Type</span> == <span class="syn-pr">TokenSlash</span> {
+        <span class="syn-pr">op</span> := p.<span class="syn-pr">cur</span>
+        p.<span class="syn-fn">advance</span>()
+        <span class="syn-pr">right</span> := p.<span class="syn-fn">parseFactor</span>()
+        <span class="syn-pr">node</span> = &<span class="syn-pr">BinOpNode</span>{<span class="syn-pr">Left</span>: <span class="syn-pr">node</span>, <span class="syn-pr">Op</span>: <span class="syn-pr">op</span>, <span class="syn-pr">Right</span>: <span class="syn-pr">right</span>}
+    }
+
+    <span class="syn-kw">return</span> <span class="syn-pr">node</span>
+}
+
+<span class="syn-kw">func</span> (p *<span class="syn-pr">Parser</span>) <span class="syn-fn">parseFactor</span>() <span class="syn-pr">ASTNode</span> {
+    <span class="syn-kw">if</span> p.<span class="syn-pr">cur</span>.<span class="syn-pr">Type</span> == <span class="syn-pr">TokenNumber</span> {
+        <span class="syn-pr">val</span>, _ := <span class="syn-pr">strconv</span>.<span class="syn-fn">Atoi</span>(p.<span class="syn-pr">cur</span>.<span class="syn-pr">Value</span>)
+        <span class="syn-pr">node</span> := &<span class="syn-pr">NumberNode</span>{<span class="syn-pr">Value</span>: <span class="syn-pr">val</span>}
+        p.<span class="syn-fn">advance</span>()
+        <span class="syn-kw">return</span> <span class="syn-pr">node</span>
+    }
+
+    <span class="syn-kw">if</span> p.<span class="syn-pr">cur</span>.<span class="syn-pr">Type</span> == <span class="syn-pr">TokenLParen</span> {
+        p.<span class="syn-fn">advance</span>()
+        <span class="syn-pr">node</span> := p.<span class="syn-fn">parseExpression</span>()
+        <span class="syn-kw">if</span> p.<span class="syn-pr">cur</span>.<span class="syn-pr">Type</span> != <span class="syn-pr">TokenRParen</span> {
+            <span class="syn-fn">panic</span>(<span class="syn-str">"缺少右括号 ')'"</span>)
+        }
+        p.<span class="syn-fn">advance</span>()
+        <span class="syn-kw">return</span> <span class="syn-pr">node</span>
+    }
+
+    <span class="syn-fn">panic</span>(<span class="syn-pr">fmt</span>.<span class="syn-fn">Sprintf</span>(<span class="syn-str">"意外的 Token: %v"</span>, p.<span class="syn-pr">cur</span>))
+}
+
+<span class="syn-cm">// ==========================================</span>
+<span class="syn-cm">// 3. REPL 主循环</span>
+<span class="syn-cm">// ==========================================</span>
+
+<span class="syn-kw">func</span> <span class="syn-fn">main</span>() {
+    <span class="syn-pr">fmt</span>.<span class="syn-fn">Println</span>(<span class="syn-str">"Go 语言微型 REPL (输入 'exit' 退出)"</span>)
+    <span class="syn-pr">fmt</span>.<span class="syn-fn">Println</span>(<span class="syn-str">"支持基本运算: + - * / () 以及整数"</span>)
+
+    <span class="syn-pr">scanner</span> := <span class="syn-pr">bufio</span>.<span class="syn-fn">NewScanner</span>(<span class="syn-pr">os</span>.<span class="syn-pr">Stdin</span>)
+    <span class="syn-kw">for</span> {
+        <span class="syn-pr">fmt</span>.<span class="syn-fn">Print</span>(<span class="syn-str">"&gt;&gt; "</span>)
+
+        <span class="syn-kw">if</span> !<span class="syn-pr">scanner</span>.<span class="syn-fn">Scan</span>() {
+            <span class="syn-kw">break</span>
+        }
+
+        <span class="syn-pr">line</span> := <span class="syn-pr">strings</span>.<span class="syn-fn">TrimSpace</span>(<span class="syn-pr">scanner</span>.<span class="syn-fn">Text</span>())
+        <span class="syn-kw">if</span> <span class="syn-pr">line</span> == <span class="syn-str">"exit"</span> || <span class="syn-pr">line</span> == <span class="syn-str">"quit"</span> {
+            <span class="syn-pr">fmt</span>.<span class="syn-fn">Println</span>(<span class="syn-str">"Bye!"</span>)
+            <span class="syn-kw">break</span>
+        }
+        <span class="syn-kw">if</span> <span class="syn-pr">line</span> == <span class="syn-str">""</span> {
+            <span class="syn-kw">continue</span>
+        }
+
+        <span class="syn-kw">func</span>() {
+            <span class="syn-kw">defer</span> <span class="syn-kw">func</span>() {
+                <span class="syn-kw">if</span> <span class="syn-pr">err</span> := <span class="syn-fn">recover</span>(); <span class="syn-pr">err</span> != <span class="syn-kw">nil</span> {
+                    <span class="syn-pr">fmt</span>.<span class="syn-fn">Printf</span>(<span class="syn-str">"Error: %v\n"</span>, <span class="syn-pr">err</span>)
+                }
+            }()
+
+            <span class="syn-pr">lexer</span> := <span class="syn-fn">NewLexer</span>(<span class="syn-pr">line</span>)
+            <span class="syn-pr">parser</span> := <span class="syn-fn">NewParser</span>(<span class="syn-pr">lexer</span>)
+            <span class="syn-pr">ast</span> := <span class="syn-pr">parser</span>.<span class="syn-fn">Parse</span>()
+            <span class="syn-pr">result</span> := <span class="syn-pr">ast</span>.<span class="syn-fn">Eval</span>()
+
+            <span class="syn-pr">fmt</span>.<span class="syn-fn">Printf</span>(<span class="syn-str">"=&gt; %d\n"</span>, <span class="syn-pr">result</span>)
+        }()
+    }
+}</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+</template>
+
+<!-- 文章 3 -->
+<template id="article-3">
+  <h1>用 2026 年的方式做 Rust 性能分析</h1>
+  <blockquote><p>从火焰图到 perf，这是我在生产环境 Rust 服务中排查性能瓶颈的完整工具链。</p></blockquote>
+  <h2>一、为什么需要这份指南？</h2>
+  <p>Rust 的性能很强，但这把"手术刀"怎么用，往往才是真正的挑战。生产环境中，性能瓶颈常常藏在：</p>
+  <ul>
+    <li>异步运行时的调度开销（火焰图上表现为大量 <code>Future::poll</code> 调用）</li>
+    <li>频繁的堆分配（<code>Vec</code> 反复扩容、临时对象大量创建）</li>
+    <li>锁竞争导致线程阻塞</li>
+    <li>CPU 缓存未命中</li>
+  </ul>
+  <p>没有 profiling，这些问题的排查如同在黑暗中摸索。2026 年的 Rust 性能分析工具链已经相当成熟，以下是一套能直接落地的方案。</p>
+  <h2>二、工具链全景</h2>
+  <table>
+    <thead><tr><th>层级</th><th>工具</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td><strong>系统级采样</strong></td><td><code>perf</code></td><td>Linux 内核自带，最精准的 CPU 采样工具</td></tr>
+      <tr><td><strong>可视化</strong></td><td><code>flamegraph</code> / <code>cargo flamegraph</code></td><td>将 perf 数据转为交互式火焰图</td></tr>
+      <tr><td><strong>内存分析</strong></td><td><code>dhat</code> / <code>heaptrack</code></td><td>追踪内存分配热点和泄漏</td></tr>
+      <tr><td><strong>锁竞争</strong></td><td><code>tokio-console</code> / <code>tsan</code></td><td>检测异步锁等待和线程数据竞争</td></tr>
+      <tr><td><strong>基准测试</strong></td><td><code>criterion.rs</code></td><td>统计级 benchmark，量化优化收益</td></tr>
+      <tr><td><strong>综合 Profiling</strong></td><td><code>oximedia-profiler</code></td><td>纯 Rust 实现，支持 CPU/内存/GPU/火焰图</td></tr>
+    </tbody>
+  </table>
+  <h2>三、从 0 到 1：生产环境实战</h2>
+  <h3>3.1 编译配置——分析的前提</h3>
+  <p>在 <code>Cargo.toml</code> 中配置 release profile，既要保留符号信息，又要保证优化质量：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">Cargo.toml</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">toml</span></div>
+    <pre><code><span class="syn-pr">[profile.release]</span>
+<span class="syn-pr">debug</span> = <span class="syn-kw">true</span>          <span class="syn-cm"># 保留调试符号，火焰图需要</span>
+<span class="syn-pr">opt-level</span> = <span class="syn-nm">3</span>         <span class="syn-cm"># 最高优化</span>
+<span class="syn-pr">codegen-units</span> = <span class="syn-nm">1</span>     <span class="syn-cm"># 优化跨模块内联</span>
+<span class="syn-pr">lto</span> = <span class="syn-str">"fat"</span>           <span class="syn-cm"># 链接时优化</span></code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p>如果使用 Rust 1.90.0+ 默认的 <code>lld</code> 链接器，需要添加 <code>--no-rosegment</code> 标志，否则 perf 无法生成准确的调用栈：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">Cargo.toml</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">toml</span></div>
+    <pre><code><span class="syn-pr">[package.metadata.cargo-flamegraph]</span>
+<span class="syn-pr">rustflags</span> = [<span class="syn-str">"-Clink-arg=-Wl,--no-rosegment"</span>]</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <h3>3.2 第一步：CPU 热点定位（perf + flamegraph）</h3>
+  <p>这是最核心的流程。安装 <code>cargo-flamegraph</code>，它会自动调用 <code>perf</code> 采集数据并生成 SVG 火焰图：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-terminal text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">bash</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">bash</span></div>
+    <pre><code><span class="syn-cm"># 安装</span>
+cargo install flamegraph
+
+<span class="syn-cm"># 直接 profiling 你的程序</span>
+RUSTFLAGS=<span class="syn-str">"-C target-cpu=native"</span> cargo flamegraph --bin your_service</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p>如果服务已经在运行，可以通过 PID 进行采样：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-terminal text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">bash</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">bash</span></div>
+    <pre><code>flamegraph -p &lt;PID&gt; --no-inline</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p><code>--no-inline</code> 参数可以避免 perf script 因展开内联函数而卡死（这是已知的性能问题）。</p>
+  <p><strong>如何解读火焰图</strong>：</p>
+  <ul>
+    <li><strong>X 轴</strong>：采样占比，宽的函数块 = 消耗 CPU 多</li>
+    <li><strong>Y 轴</strong>：调用栈深度</li>
+    <li><strong>优先看占比 &gt; 10% 的函数</strong>，集中优化这些热点路径</li>
+  </ul>
+  <p>常见的异常模式：</p>
+  <ul>
+    <li><strong>平顶宽条</strong>：核心业务逻辑的 CPU 消耗点</li>
+    <li><strong>频繁的 <code>Future::poll</code> 尖峰</strong>：async/await 边界过于频繁，存在不必要的轮询</li>
+    <li><strong><code>memcpy</code> / <code>malloc</code> 相关的宽条</strong>：内存分配是隐形杀手</li>
+  </ul>
+  <h3>3.3 第二步：内存分配追踪</h3>
+  <p>当火焰图显示大量 <code>malloc</code> / <code>free</code> 调用时，需要用内存分析工具精确定位。<code>dhat</code> 是 Rust 官方推荐的堆分析工具：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">Cargo.toml</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">toml</span></div>
+    <pre><code><span class="syn-pr">[dependencies]</span>
+<span class="syn-pr">dhat</span> = { <span class="syn-pr">version</span> = <span class="syn-str">"0.11"</span>, <span class="syn-pr">features</span> = [<span class="syn-str">"alloc_counter"</span>] }</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p>在 <code>main</code> 中插入分析器：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">main.rs</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">rust</span></div>
+    <pre><code><span class="syn-kw">#[global_allocator]</span>
+<span class="syn-kw">static</span> <span class="syn-pr">A</span>: <span class="syn-pr">dhat</span>::<span class="syn-pr">Alloc</span> = <span class="syn-pr">dhat</span>::<span class="syn-pr">Alloc</span>;
+
+<span class="syn-kw">fn</span> <span class="syn-fn">main</span>() {
+    <span class="syn-kw">let</span> _profiler = <span class="syn-pr">dhat</span>::<span class="syn-pr">Profiler</span>::<span class="syn-fn">new_with_allocs</span>();
+    <span class="syn-cm">// 你的业务代码</span>
+}</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p>运行程序后，<code>dhat</code> 会输出详细的分配报告，包括每个调用点的分配次数和字节数。这是优化内存复用、引入对象池的直接依据。</p>
+  <h3>3.4 第三步：异步运行时与锁检测</h3>
+  <p>对于 Tokio 服务，<strong><code>tokio-console</code></strong> 是必装工具。它能实时展示所有任务的唤醒、等待、运行状态，直观地暴露锁竞争和任务调度延迟。</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">Cargo.toml</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">toml</span></div>
+    <pre><code><span class="syn-pr">[dependencies]</span>
+<span class="syn-pr">tokio</span> = { <span class="syn-pr">version</span> = <span class="syn-str">"1"</span>, <span class="syn-pr">features</span> = [<span class="syn-str">"full"</span>, <span class="syn-str">"tracing"</span>] }
+<span class="syn-pr">console-subscriber</span> = <span class="syn-str">"0.2"</span></code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p>启动服务时启用：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">main.rs</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">rust</span></div>
+    <pre><code><span class="syn-pr">console_subscriber</span>::<span class="syn-fn">init</span>();</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p>然后运行 <code>tokio-console</code> 命令连接即可。</p>
+  <p>对于同步锁的检测，可以使用 ThreadSanitizer（需要 nightly Rust）：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-terminal text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">bash</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">bash</span></div>
+    <pre><code>RUSTFLAGS=<span class="syn-str">"-Zsanitizer=thread"</span> cargo +nightly test --target x86_64-unknown-linux-gnu</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <h2>四、2026 年的新工具</h2>
+  <p>除了经典工具链，Rust 生态在今年也出现了全面的 profiling 库。<strong><code>oximedia-profiler</code></strong> 是一个纯 Rust 实现的综合性能分析库，支持 CPU 采样、内存追踪、火焰图生成、瓶颈自动分类等功能：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">main.rs</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">rust</span></div>
+    <pre><code><span class="syn-kw">use</span> <span class="syn-pr">oximedia_profiler</span>::{<span class="syn-pr">Profiler</span>, <span class="syn-pr">ProfilingMode</span>};
+
+<span class="syn-kw">let mut</span> <span class="syn-pr">profiler</span> = <span class="syn-pr">Profiler</span>::<span class="syn-fn">new</span>();
+<span class="syn-pr">profiler</span>.<span class="syn-fn">start</span>()?;
+
+<span class="syn-cm">// 你的业务代码</span>
+
+<span class="syn-pr">profiler</span>.<span class="syn-fn">stop</span>()?;
+<span class="syn-kw">let</span> <span class="syn-pr">report</span> = <span class="syn-pr">profiler</span>.<span class="syn-fn">generate_report</span>();
+<span class="syn-fn">println!</span>(<span class="syn-str">"{}"</span>, <span class="syn-pr">report</span>);</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p>它适合需要将 profiling 能力<strong>内置到服务中</strong>的场景，例如通过 HTTP 接口动态开启/关闭性能采样。</p>
+  <h2>五、避坑指南</h2>
+  <ol>
+    <li><strong>Perf 无法解析调用栈</strong>：Rust 1.90.0+ 使用 <code>lld</code> 时，务必添加 <code>-Clink-arg=-Wl,--no-rosegment</code>，否则 <code>perf</code> 采集的调用栈会缺少符号信息。</li>
+    <li><strong>火焰图生成太慢</strong>：<code>perf script</code> 展开内联函数可能耗时极长，使用 <code>flamegraph --no-inline</code> 可以规避。</li>
+    <li><strong>Release 模式下看不到函数名</strong>：确保 <code>[profile.release] debug = true</code>，保留调试符号。</li>
+    <li><strong>采样频率的选择</strong>：默认 997Hz 适合大部分场景。对于高吞吐服务，可以适当调低（如 99Hz）以减少 profiling 本身的开销。</li>
+  </ol>
+  <h2>六、完整工作流</h2>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-terminal text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">workflow.sh</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">bash</span></div>
+    <pre><code><span class="syn-cm"># 1. 编译（保留符号 + 优化）</span>
+RUSTFLAGS=<span class="syn-str">"-C force-frame-pointers=yes"</span> cargo build --release
+
+<span class="syn-cm"># 2. CPU 热点采样</span>
+cargo flamegraph --bin your_service
+
+<span class="syn-cm"># 3. 内存分配分析（修改代码插入 dhat）</span>
+cargo run --release
+
+<span class="syn-cm"># 4. 异步运行时检查</span>
+tokio-console
+
+<span class="syn-cm"># 5. 基准测试 + 回归验证</span>
+cargo bench</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p>性能优化不是一次性的工作。建立基准测试（<code>criterion.rs</code>）和持续 profiling 流水线，才能让性能长期可控。</p>
+</template>
+
+<!-- 文章 4 -->
+<template id="article-4">
+  <h1>微服务？就这经济环境？</h1>
+  <blockquote><p>务实聊聊什么时候你才真正需要微服务（剧透：大概率还不需要），以及不用它该用什么。</p></blockquote>
+  <h2>一、先泼一盆冷水</h2>
+  <p>2026 年的技术圈，微服务早已不是新鲜词。但一个残酷的事实是：</p>
+  <p><strong>大部分团队根本就不需要微服务。</strong></p>
+  <p>更直白地说：很多上了微服务的团队，只是在用更复杂的架构，解决单体架构下压根不存在的问题。</p>
+  <p>如果你现在正面临以下情况，请先停下来想一想：</p>
+  <ul>
+    <li>团队只有 10 个人，维护着 20 个微服务</li>
+    <li>每次上线要协调 5 个服务之间的发布顺序</li>
+    <li>一个简单的查询要跨 6 个服务做 RPC 调用</li>
+    <li>测试环境经常因为某个服务没启动而无法联调</li>
+    <li>为了排查一个问题，要翻 3 个服务的日志</li>
+  </ul>
+  <p>如果以上中了两条以上，说明你已经陷入了<strong>微服务陷阱</strong>——用一种复杂度换来了另一种复杂度，而且往往得不偿失。</p>
+  <h2>二、微服务的真正价值是什么？</h2>
+  <p>微服务的核心价值从来不是"技术先进"，而是<strong>组织结构和团队规模的映射</strong>。</p>
+  <p><strong>微服务解决的根本问题是：人太多，挤在一个代码库里改不动了。</strong></p>
+  <p>这个概念来自康威定律：系统的架构会反映组织沟通结构。当团队从 10 人扩张到 100 人时，所有人改同一个代码库带来的冲突成本会指数级增长。微服务本质上是把 100 个人拆成 10 个小组，每个小组独立维护自己的服务，互不干扰。</p>
+  <p>如果你只有 1 个团队、十几个人，微服务带来的"独立部署"价值远小于"服务拆分"带来的运维和调试成本。</p>
+  <h2>三、什么时候你才真正需要微服务？</h2>
+  <p>以下条件<strong>全部满足</strong>时，可以考虑微服务：</p>
+  <table>
+    <thead><tr><th>条件</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>团队规模 &gt; 50 人</td><td>单个代码库已经无法容纳协作</td></tr>
+      <tr><td>模块边界清晰</td><td>能按业务域天然拆分（订单、用户、支付等）</td></tr>
+      <tr><td>有成熟的 DevOps 基础设施</td><td>CI/CD、容器编排、服务发现、链路追踪全部到位</td></tr>
+      <tr><td>有专职的 SRE/运维团队</td><td>能 hold 住多服务的部署和稳定性</td></tr>
+      <tr><td>业务需要独立扩容</td><td>不同模块的流量负载差异巨大</td></tr>
+    </tbody>
+  </table>
+  <p>如果以上 5 条里缺了任何 1 条，<strong>微服务带来的收益大概率覆盖不了成本</strong>。</p>
+  <h2>四、不用微服务，用什么？</h2>
+  <h3>✅ 方案 1：模块化单体</h3>
+  <p>这是目前业内<strong>最被低估</strong>的架构。本质上，你仍然部署一个进程，但代码按模块严格组织：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">main.rs</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">rust</span></div>
+    <pre><code><span class="syn-cm">// 模块边界清晰，但运行在一个进程里</span>
+<span class="syn-kw">mod</span> <span class="syn-pr">order</span>;
+<span class="syn-kw">mod</span> <span class="syn-pr">user</span>;
+<span class="syn-kw">mod</span> <span class="syn-pr">payment</span>;
+
+<span class="syn-cm">// 模块之间通过 trait / interface 调用</span>
+<span class="syn-kw">use</span> <span class="syn-pr">order</span>::<span class="syn-pr">OrderService</span>;
+<span class="syn-kw">use</span> <span class="syn-pr">payment</span>::<span class="syn-pr">PaymentService</span>;</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p><strong>优势</strong>：</p>
+  <ul>
+    <li>不用处理网络调用、序列化、超时重试</li>
+    <li>事务天然支持（一个数据库事务搞定）</li>
+    <li>调试简单，断点直接打</li>
+    <li>部署只需一个包</li>
+  </ul>
+  <p><strong>做好模块化单体的关键</strong>：用内部接口严格隔离模块，避免内部循环依赖。未来真要拆分时，模块间的调用点很容易改成 RPC/HTTP。</p>
+  <h3>✅ 方案 2：分层架构 + 读写分离</h3>
+  <p>大多数业务系统的瓶颈在于数据库，而不是应用层代码。与其拆服务，不如先拆数据库：</p>
+  <ul>
+    <li><strong>CQRS（命令查询分离）</strong>：写走主库，读走从库/缓存</li>
+    <li><strong>分库分表</strong>：按业务维度或时间维度拆分数据</li>
+  </ul>
+  <p>把数据库这层优化好，单体应用扛住几千 QPS 是完全可以做到的。</p>
+  <h3>✅ 方案 3：后台任务剥离</h3>
+  <p>把耗时/非核心的职责剥离出去，保留核心 API 服务：</p>
+  <ul>
+    <li>定时任务 → 独立 Worker 进程</li>
+    <li>消息消费 → 独立 Consumer 进程</li>
+    <li>文件处理 → 独立 Job 进程</li>
+  </ul>
+  <p>这些和主服务共用代码库，但独立部署。这是<strong>轻量级的服务拆分</strong>，成本远低于微服务。</p>
+  <h3>✅ 方案 4：插件化架构（核心+扩展）</h3>
+  <p>如果确实有部分模块需要独立变更（比如不同客户的定制逻辑），可以考虑插件化：</p>
+  <ul>
+    <li>核心平台保持稳定</li>
+    <li>扩展逻辑通过动态加载或脚本方式注入</li>
+  </ul>
+  <p>这在 Rust 生态中可以通过 <code>wasm</code> 或动态链接库实现。</p>
+  <h2>五、决策流程图</h2>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">decision.txt</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">text</span></div>
+    <pre><code>你的团队有多少人？
+  │
+  ├─ ＜ 20 人
+  │    └─ 单体架构（模块化设计），别折腾
+  │
+  ├─ 20 ~ 50 人
+  │    ├─ 模块化单体 + 后台任务剥离
+  │    └─ 如果模块边界足够清晰，可考虑拆 2~3 个粗粒度服务
+  │
+  └─ ＞ 50 人 + 有成熟的运维基础设施
+       └─ 可以开始按业务域拆微服务，但必须同时建设监控/追踪/日志体系</code></pre>
+    <div class="sweep"></div>
+  </div>
+  <h2>六、如果一定要拆，怎么拆才务实？</h2>
+  <h3>原则 1：先拆数据，再拆代码</h3>
+  <p>不要一上来就拆服务。先做数据库的读写分离、分库分表，让数据层的瓶颈先解决。</p>
+  <h3>原则 2：按业务域拆，不按技术层拆</h3>
+  <p>正确的拆法：订单域、用户域、支付域。<br>错误的拆法：API 层一个服务、业务逻辑层一个服务、数据访问层一个服务（这是三层架构，不是微服务）。</p>
+  <h3>原则 3：从边缘开始拆</h3>
+  <p>先拆分最独立、依赖最少的模块（比如通知服务、日志收集），积累经验后再拆核心域。</p>
+  <h3>原则 4：拆之前先建好基础设施</h3>
+  <ul>
+    <li><strong>服务发现</strong>：Consul / Etcd / Nacos</li>
+    <li><strong>链路追踪</strong>：Jaeger / SkyWalking</li>
+    <li><strong>集中日志</strong>：ELK / Loki</li>
+    <li><strong>监控告警</strong>：Prometheus + Grafana</li>
+  </ul>
+  <p>没有这些，微服务就是黑盒，出问题你根本不知道从哪里查。</p>
+  <h2>七、2026 年的现实</h2>
+  <p>2026 年，经济环境依然充满不确定性。技术决策比任何时候都更需要<strong>务实</strong>。</p>
+  <ul>
+    <li>云成本在涨，多一个服务就多一份资源开销</li>
+    <li>运维人力在缩，多一个服务就多一份维护负担</li>
+    <li>业务要求在变，多一层架构就多一层变更成本</li>
+  </ul>
+  <p><strong>微服务不是技术债务，而是组织债务。</strong> 它解决的是组织的问题，而不是技术的问题。如果你没有组织的痛点，就不要用组织的方案来解决技术的问题。</p>
+  <hr>
+  <blockquote><p><strong>结语</strong>：<br>架构设计的本质是在约束条件下做权衡。与其追逐"微服务"的标签，不如先把单体做到极致——模块化清晰、测试覆盖充分、CI/CD 自动化、监控告警完善。等这些做好了，你会发现：当初想用微服务解决的问题，很多已经不存在了。</p><p>如果到时候还觉得需要拆，再拆也不迟。而且那时候你拆的依据会更充分，拆出来的服务也会更合理。</p></blockquote>
+</template>
+
+<!-- 文章 5 -->
+<template id="article-5">
+  <h1>JavaScript 框架的隐性成本</h1>
+  <blockquote><p>运行时开销显而易见，包体积也肉眼可见，但你不需要的那些抽象层带来的认知负担呢？</p></blockquote>
+  <h2>一、框架费用的完整账本</h2>
+  <p>选择 JavaScript 框架时，我们习惯性地计算：</p>
+  <ul>
+    <li>初始加载时间</li>
+    <li>运行时性能</li>
+    <li>内存占用</li>
+  </ul>
+  <p>但真正在长期项目中消耗团队生产力的，往往是那些<strong>看不见的成本</strong>。</p>
+  <table>
+    <thead><tr><th>成本类型</th><th>可量化程度</th><th>长期影响</th></tr></thead>
+    <tbody>
+      <tr><td>运行时性能</td><td>✅ 容易测量</td><td>影响用户体验，可优化</td></tr>
+      <tr><td>包体积</td><td>✅ 容易测量</td><td>影响首屏加载，可优化</td></tr>
+      <tr><td>学习曲线</td><td>⚠️ 难以量化</td><td>新成员上手慢，决策成本高</td></tr>
+      <tr><td>心智模型负担</td><td>❌ 几乎无法量化</td><td>持续消耗，永不停歇</td></tr>
+      <tr><td>抽象泄漏风险</td><td>❌ 几乎无法量化</td><td>需要深入框架源码排查</td></tr>
+      <tr><td>升级成本</td><td>⚠️ 时高时低</td><td>大版本升级如同换框架</td></tr>
+      <tr><td>生态锁定</td><td>❌ 几乎无法量化</td><td>切换成本极高</td></tr>
+    </tbody>
+  </table>
+  <p>这篇文章要讨论的，就是后面这几项<strong>隐性成本</strong>。</p>
+  <h2>二、框架的本质：一种不断泄漏的抽象</h2>
+  <p>计算机科学中有一个经典论断：</p>
+  <blockquote><p><strong>所有非平凡的抽象，在某种程度上都是泄漏的。</strong> —— Joel Spolsky</p></blockquote>
+  <p>JavaScript 框架本质上是一层<strong>声明式 UI 的抽象</strong>。它承诺你：只需要描述"UI 应该长什么样"，剩下的更新、渲染、优化都由框架来搞定。</p>
+  <p>但现实是：</p>
+  <p><strong>当你的应用复杂度超过框架的设计假设时，抽象就开始泄漏。</strong></p>
+  <h3>具体的泄漏场景</h3>
+  <h4>React：Hooks 的闭包陷阱</h4>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">Counter.jsx</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">jsx</span></div>
+    <pre><code><span class="syn-kw">function</span> <span class="syn-fn">Counter</span>() {
+  <span class="syn-kw">const</span> [count, setCount] = <span class="syn-fn">useState</span>(<span class="syn-nm">0</span>);
+
+  <span class="syn-fn">useEffect</span>(() =&gt; {
+    <span class="syn-kw">const</span> timer = <span class="syn-fn">setInterval</span>(() =&gt; {
+      <span class="syn-fn">setCount</span>(count + <span class="syn-nm">1</span>); <span class="syn-cm">// count 是闭包，永远是 0</span>
+    }, <span class="syn-nm">1000</span>);
+    <span class="syn-kw">return</span> () =&gt; <span class="syn-fn">clearInterval</span>(timer);
+  }, []); <span class="syn-cm">// 依赖数组为空，但 count 变了</span>
+}</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p>这个 bug 的产生，是因为你需要理解<strong>Hooks 的依赖数组、闭包、和调度机制</strong>之间的关系——这些都是框架引入的概念，原生 JavaScript 里并不存在。</p>
+  <h4>Vue：响应式系统的边界</h4>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">User.vue</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">vue</span></div>
+    <pre><code><span class="syn-kw">&lt;template&gt;</span>
+  <span class="syn-kw">&lt;div&gt;</span>{{ user.profile.name }}<span class="syn-kw">&lt;/div&gt;</span>
+<span class="syn-kw">&lt;/template&gt;</span>
+
+<span class="syn-kw">&lt;script&gt;</span>
+<span class="syn-kw">export default</span> {
+  <span class="syn-fn">data</span>() {
+    <span class="syn-kw">return</span> {
+      <span class="syn-pr">user</span>: {}, <span class="syn-cm">// 初始空对象</span>
+    };
+  },
+  <span class="syn-fn">mounted</span>() {
+    <span class="syn-fn">fetch</span>(<span class="syn-str">'/api/user'</span>).<span class="syn-fn">then</span>(res =&gt; {
+      <span class="syn-kw">this</span>.user = res.data; <span class="syn-cm">// 重新赋值，OK</span>
+      <span class="syn-kw">this</span>.user.profile = res.data.profile; <span class="syn-cm">// OK</span>
+      <span class="syn-cm">// 但如果直接 this.user.profile.name = 'xxx'，Vue 2 检测不到</span>
+    });
+  },
+};
+<span class="syn-kw">&lt;/script&gt;</span></code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p>为什么不能直接改？因为你需要理解 Vue 的响应式系统是基于 <code>getter/setter</code> 的，新增的属性没有被劫持。</p>
+  <h4>Angular：变更检测的幽灵</h4>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">my.component.ts</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">typescript</span></div>
+    <pre><code><span class="syn-pr">@Component</span>({ <span class="syn-pr">changeDetection</span>: <span class="syn-pr">ChangeDetectionStrategy</span>.<span class="syn-pr">OnPush</span> })
+<span class="syn-kw">export class</span> <span class="syn-pr">MyComponent</span> {
+  <span class="syn-pr">@Input</span>() <span class="syn-pr">items</span>: <span class="syn-pr">any</span>[] = [];
+
+  <span class="syn-fn">addItem</span>() {
+    <span class="syn-kw">this</span>.<span class="syn-pr">items</span>.<span class="syn-fn">push</span>(<span class="syn-str">'new'</span>); <span class="syn-cm">// 数组内容变了，但引用没变</span>
+    <span class="syn-cm">// OnPush 模式下，视图不会更新！</span>
+  }
+}</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p>你需要理解 Angular 的变更检测是基于"引用变化"还是"内容变化"——这是一个框架特有的、与业务无关的知识负担。</p>
+  <h2>三、框架升级的隐性成本</h2>
+  <p>2025 年，React 团队发布了 React 19。如果你还在用 React 16/17，升级路径可能是：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">upgrade.txt</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">text</span></div>
+    <pre><code>React 16 → 16.8（Hooks）→ 17 → 18 → 19</code></pre>
+    <div class="sweep"></div>
+  </div>
+  <p>每一次大版本升级，都可能伴随着：</p>
+  <ul>
+    <li>废弃 API 的迁移（如 <code>React.FC</code> 的隐式 children）</li>
+    <li>新的并发特性需要理解（<code>useTransition</code>、<code>useDeferredValue</code>）</li>
+    <li>第三方库的兼容性检查</li>
+    <li>测试用例的更新</li>
+  </ul>
+  <p><strong>Vue 2 → Vue 3</strong> 更是几乎等于重写。Options API 到 Composition API 的迁移，不仅仅是语法变化，而是整个<strong>心智模型的切换</strong>。</p>
+  <p>一个 2020 年启动的项目，到 2026 年如果还在维护，至少经历过 2-3 次框架升级。每一次升级都是一笔不小的成本。</p>
+  <h2>四、隐性成本的本质：框架引入的问题空间</h2>
+  <p>每个框架都在解决"如何高效构建 UI"这个问题的同时，<strong>引入了自己的一套问题空间</strong>：</p>
+  <table>
+    <thead><tr><th>框架</th><th>你需要理解的概念</th><th>认知负担来源</th></tr></thead>
+    <tbody>
+      <tr><td>React</td><td>JSX、组件生命周期、Hooks 闭包、虚拟 DOM diff、Fiber 调度、并发特性</td><td>函数式编程 + 运行时调度</td></tr>
+      <tr><td>Vue</td><td>模板语法、响应式系统、Composition API、依赖收集、编译时优化</td><td>响应式数据的边界情况</td></tr>
+      <tr><td>Angular</td><td>依赖注入、RxJS、Zone.js、变更检测策略、模块系统</td><td>框架作为平台，内聚性极高</td></tr>
+      <tr><td>Svelte</td><td>编译时框架、响应式语句、Store、过渡动画</td><td>编译器侵入性，调试困难</td></tr>
+      <tr><td>Next.js</td><td>SSR/SSG/ISR、文件路由、Server Components、中间件</td><td>混合渲染策略的选择成本</td></tr>
+    </tbody>
+  </table>
+  <p>每一个框架都要求你<strong>用框架的方式思考问题</strong>。你写的不是 JavaScript，而是 React/Vue/Angular 的方言。</p>
+  <p>这在简单场景下还好，但一旦需求偏离框架的"快乐路径"，你就要开始对抗框架了。</p>
+  <h2>五、什么时候隐性成本最高？</h2>
+  <h3>1. 有大量业务逻辑在 UI 层</h3>
+  <p>如果你的应用不只是展示数据，而是有复杂的业务规则、状态流转、权限判断，这些逻辑会被框架的"响应式系统"和"副作用管理"层层包裹，变得难以测试和推理。</p>
+  <h3>2. 需要与原生/非前端生态交互</h3>
+  <p>嵌入 WebView、与原生 SDK 交互、使用 WebAssembly 模块时，框架的抽象层反而成了累赘。</p>
+  <h3>3. 团队人员流动频繁</h3>
+  <p>新成员不仅要学习业务，还要学习框架的"思维方式"。如果团队里同时有 React、Vue、Angular 背景的人，认知切换成本更高。</p>
+  <h2>六、如何降低隐性成本？</h2>
+  <h3>原则 1：把业务逻辑和 UI 框架解耦</h3>
+  <p><strong>不要让框架侵入业务逻辑。</strong></p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">user.service.ts</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">typescript</span></div>
+    <pre><code><span class="syn-cm">// ❌ 业务逻辑和框架耦合</span>
+<span class="syn-kw">function</span> <span class="syn-fn">useUser</span>() {
+  <span class="syn-kw">const</span> [user, setUser] = <span class="syn-fn">useState</span>(<span class="syn-kw">null</span>);
+  <span class="syn-kw">const</span> <span class="syn-fn">fetchUser</span> = <span class="syn-kw">async</span> (id) =&gt; {
+    <span class="syn-kw">const</span> data = <span class="syn-kw">await</span> api.<span class="syn-fn">getUser</span>(id);
+    <span class="syn-fn">setUser</span>(data);
+  };
+  <span class="syn-kw">return</span> { user, fetchUser };
+}
+
+<span class="syn-cm">// ✅ 纯业务逻辑</span>
+<span class="syn-kw">class</span> <span class="syn-pr">UserService</span> {
+  <span class="syn-kw">async</span> <span class="syn-fn">fetchUser</span>(id: <span class="syn-pr">string</span>): <span class="syn-pr">Promise</span>&lt;<span class="syn-pr">User</span>&gt; {
+    <span class="syn-kw">return await</span> api.<span class="syn-fn">getUser</span>(id);
+  }
+}
+<span class="syn-cm">// UI 层只负责展示和交互</span></code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <h3>原则 2：选择合适的抽象层级</h3>
+  <table>
+    <thead><tr><th>场景</th><th>推荐方案</th></tr></thead>
+    <tbody>
+      <tr><td>简单静态页面</td><td>Vanilla JS + HTML</td></tr>
+      <tr><td>少量交互的页面</td><td>Alpine.js / htmx</td></tr>
+      <tr><td>中等复杂度 SPA</td><td>选一个框架，但保持认知边界</td></tr>
+      <tr><td>大型复杂应用</td><td>框架 + 严格的架构约束</td></tr>
+    </tbody>
+  </table>
+  <h3>原则 3：定期评估框架的"磨损"</h3>
+  <p>每隔一段时间问自己：</p>
+  <ul>
+    <li>我们还在用这个框架的"快乐路径"吗？</li>
+    <li>有多少代码是在"绕过"框架的限制？</li>
+    <li>升级到这个框架的最新版本需要多少工作量？</li>
+  </ul>
+  <h3>原则 4：考虑无框架/轻框架方案</h3>
+  <p>2026 年，以下方案已经足够成熟：</p>
+  <ul>
+    <li><strong>Web Components</strong>：原生组件化，不依赖框架</li>
+    <li><strong>Sigils / Signals</strong>：细粒度响应式，不需要虚拟 DOM</li>
+    <li><strong>HTMX</strong>：用超媒体驱动应用，保持服务端渲染</li>
+    <li><strong>Vanilla Extract / Panda CSS</strong>：零运行时 CSS-in-JS</li>
+  </ul>
+  <h2>七、2026 年的现实</h2>
+  <p>前端框架的竞争已经趋于平稳。React、Vue、Angular 各有千秋，但三者的核心概念已经高度同质化：</p>
+  <ul>
+    <li>组件化</li>
+    <li>响应式数据</li>
+    <li>生命周期管理</li>
+    <li>状态管理方案</li>
+  </ul>
+  <p><strong>真正的差异化不在于框架本身，而在于你如何用它。</strong></p>
+  <p>一个经过深思熟虑的、架构清晰的、把业务逻辑和框架隔离的项目，用任何主流框架都能做得好。反之，再先进的框架也救不了糟糕的架构。</p>
+  <hr>
+  <blockquote><p><strong>结语</strong>：<br>框架是工具，不是信仰。选择框架时，不仅要看它的 benchmark 分数和 GitHub star 数量，更要评估：<strong>它要求我的团队额外理解多少概念？这些概念对我的业务有直接帮助吗？</strong></p><p>有时，用框架最 "笨" 的方式写代码，反而是长期维护成本最低的方式——因为你的新人能看懂，你的同事能理解，五年后的你还能维护。</p><p>框架的价值在于它解决的问题，它的成本在于它引入的复杂性。算清楚这笔账，再做出选择。</p></blockquote>
+</template>
+
+<!-- 文章 6 -->
+<template id="article-6">
+  <h1>真正能扩展的 Postgres 索引策略</h1>
+  <blockquote><p>B-tree、GIN、GiST、BRIN——什么时候用哪个？附真实生产负载的基准测试，别再靠猜。</p></blockquote>
+  <h2>一、先回答那个最要命的问题</h2>
+  <p>索引不是越多越好。Percona 在一份真实生产级负载的基准测试中发现，<strong>把一张表的索引从 7 个增加到 39 个，TPS 从 ~1400 降到了 ~600，吞吐量只剩原来的 42%</strong>。平均每个事务的耗时从 11ms 变成了 26ms。</p>
+  <p>换句话说：<strong>多一个索引，不一定多一份快，但一定多一份写入代价。</strong></p>
+  <p>PostgreSQL 提供了 B-tree、Hash、GiST、SP-GiST、GIN、BRIN 六种原生索引类型，加上 bloom 等扩展索引。但绝大多数场景下，你只需要在<strong>四种核心类型</strong>里做选择：</p>
+  <table>
+    <thead><tr><th>索引类型</th><th>核心能力</th><th>一句话选型</th></tr></thead>
+    <tbody>
+      <tr><td><strong>B-tree</strong></td><td>等值 + 范围 + 排序</td><td>默认首选，90% 场景够用</td></tr>
+      <tr><td><strong>GIN</strong></td><td>多值包含查询（数组/JSONB/全文）</td><td>"这个文档/数组里有没有这个元素？"</td></tr>
+      <tr><td><strong>GiST</strong></td><td>空间/几何/范围/最近邻</td><td>"这个点附近有什么？这个区间是否重叠？"</td></tr>
+      <tr><td><strong>BRIN</strong></td><td>超大表 + 顺序相关列</td><td>表上百 GB、按时间查，存储开销极小</td></tr>
+    </tbody>
+  </table>
+  <h2>二、B-tree：那个你没得选的"默认"</h2>
+  <p>PostgreSQL 的 <code>CREATE INDEX</code> 默认创建的就是 B-tree，也是唯一支持<strong>唯一约束</strong>和<strong>主键</strong>的索引类型。</p>
+  <h3>它能干什么</h3>
+  <p>B-tree 适配的操作符包括 <code>=</code>、<code>&lt;</code>、<code>&lt;=</code>、<code>&gt;</code>、<code>&gt;=</code>、<code>BETWEEN</code>、<code>IN</code>，以及 <code>IS NULL</code>/<code>IS NOT NULL</code>。它还天然支持 <code>ORDER BY</code> 排序——如果索引顺序与查询的排序一致，PostgreSQL 可以直接返回排好序的结果，省掉一次显式排序。</p>
+  <p>对于前缀匹配，如 <code>LIKE 'foo%'</code> 或 <code>~ '^foo'</code>，B-tree 也能命中；但 <code>LIKE '%bar%'</code> 这种"包含"式匹配就不行了，得靠 GIN + pg_trgm。</p>
+  <h3>复合索引的最左前缀原则</h3>
+  <p>这是一个经常踩的坑。在 <code>(user_id, status, created_at)</code> 上的 B-tree 索引，可以服务：</p>
+  <ul>
+    <li><code>WHERE user_id = ?</code></li>
+    <li><code>WHERE user_id = ? AND status = ?</code></li>
+    <li><code>WHERE user_id = ? AND status = ? AND created_at &gt; ?</code></li>
+  </ul>
+  <p>但<strong>不能</strong>服务只按 <code>status</code> 或只按 <code>created_at</code> 的查询。规则很简单：<strong>查询条件必须命中索引的最左列</strong>，从左边开始匹配。</p>
+  <p>实用建议：把等值过滤的列放在前面，范围查询的列放在后面。</p>
+  <h3>什么时候不用 B-tree？</h3>
+  <ul>
+    <li>需要查询<strong>数组是否包含某个元素</strong>、<strong>JSONB 是否包含某个键</strong></li>
+    <li>需要做<strong>全文搜索</strong></li>
+    <li>需要对<strong>地理/几何类型</strong>做空间查询</li>
+    <li>表极大且只在<strong>按时间范围查询</strong>（这时候 BRIN 可能更划算）</li>
+  </ul>
+  <h2>三、GIN：倒排索引的天花板</h2>
+  <p>GIN（Generalized Inverted Index）是倒排索引，核心思想是：<strong>为每个"元素"建一个索引条目，指向包含它的行</strong>。它最擅长的查询形态是"这一行里有没有包含某个东西？"。</p>
+  <h3>典型场景</h3>
+  <p><strong>JSONB 包含查询</strong>：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">query.sql</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">sql</span></div>
+    <pre><code><span class="syn-cm">-- 查找 metadata 中包含 {"plan":"pro"} 的行</span>
+<span class="syn-kw">CREATE INDEX</span> <span class="syn-pr">ON</span> customers <span class="syn-kw">USING</span> <span class="syn-pr">GIN</span> (metadata);
+<span class="syn-kw">SELECT</span> * <span class="syn-kw">FROM</span> customers <span class="syn-kw">WHERE</span> metadata @&gt; <span class="syn-str">'{"plan":"pro"}'</span>;</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p><strong>数组包含</strong>：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">query.sql</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">sql</span></div>
+    <pre><code><span class="syn-kw">CREATE INDEX</span> <span class="syn-pr">ON</span> posts <span class="syn-kw">USING</span> <span class="syn-pr">GIN</span> (tags);
+<span class="syn-kw">SELECT</span> * <span class="syn-kw">FROM</span> posts <span class="syn-kw">WHERE</span> tags @&gt; <span class="syn-pr">ARRAY</span>[<span class="syn-str">'postgres'</span>, <span class="syn-str">'rust'</span>];</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p><strong>全文搜索</strong>：GIN 是 PostgreSQL 全文搜索的首选索引类型，配合 <code>@@</code> 操作符和 <code>tsvector</code> 使用。</p>
+  <p><strong>模糊匹配（<code>%abc%</code>）</strong>：配合 <code>pg_trgm</code> 扩展，GIN 可以加速任意子串的 <code>LIKE</code> 查询。</p>
+  <h3>GIN 的代价</h3>
+  <p>GIN 是"读快写慢"的典型代表。一次 <code>INSERT</code> 或 <code>UPDATE</code> 可能需要更新多条索引条目，写入时延明显高于 B-tree。GIN 索引的体积也往往比 B-tree 大得多。</p>
+  <p>因此，<strong>GIN 适合读多写少的场景</strong>。如果表高频更新，GIN 索引会成为性能杀手。</p>
+  <h2>四、GiST：空间和范围的瑞士军刀</h2>
+  <p>GiST（Generalized Search Tree）不是一个具体的算法，而是一个<strong>可扩展框架</strong>，允许实现多种索引策略（R-tree、RD-tree、签名文件等）。</p>
+  <h3>典型场景</h3>
+  <p><strong>地理空间查询</strong>：配合 PostGIS，做 "附近地点" 查询（KNN）：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">query.sql</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">sql</span></div>
+    <pre><code><span class="syn-kw">CREATE INDEX</span> <span class="syn-pr">ON</span> places <span class="syn-kw">USING</span> <span class="syn-pr">GIST</span> (geom);
+<span class="syn-kw">SELECT</span> * <span class="syn-kw">FROM</span> places <span class="syn-kw">ORDER BY</span> geom &lt;-&gt; <span class="syn-pr">ST_MakePoint</span>(<span class="syn-nm">121.5</span>, <span class="syn-nm">31.2</span>) <span class="syn-kw">LIMIT</span> <span class="syn-nm">20</span>;</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <p><strong>范围类型查询</strong>：检查时间区间或数值区间是否重叠：</p>
+  <div class="code-block">
+    <div class="code-block-head"><div class="flex items-center gap-2"><i class="fas fa-code text-[10px]" style="color:var(--accent)"></i><span class="mono text-xs" style="color:var(--text-muted)">schema.sql</span></div><span class="mono text-[10px]" style="color:var(--text-muted)">sql</span></div>
+    <pre><code><span class="syn-cm">-- 禁止同一个房间的预订时间重叠</span>
+<span class="syn-kw">CREATE EXTENSION</span> <span class="syn-pr">btree_gist</span>;
+<span class="syn-kw">CREATE TABLE</span> booking (
+  room_id <span class="syn-pr">int</span>,
+  during <span class="syn-pr">tstzrange</span>,
+  <span class="syn-kw">EXCLUDE USING</span> <span class="syn-pr">gist</span> (room_id <span class="syn-kw">WITH</span> =, during <span class="syn-kw">WITH</span> &amp;&amp;)
+);</code></pre>
+    <button class="copy-btn"><i class="fas fa-copy text-[10px]"></i> 复制</button><div class="sweep"></div>
+  </div>
+  <h3>GiST 用于全文搜索</h3>
+  <p>GiST 也可以用于全文搜索，但它是<strong>有损索引</strong>——可能产生误匹配（false match），PostgreSQL 需要回表验证。GIN 的查询速度通常更快，但 GiST 的索引体积更小、更新成本更低。如果是高频写入的全文搜索场景，GiST 可能是更好的权衡。</p>
+  <h2>五、BRIN：超大表的"省流"方案</h2>
+  <p>BRIN（Block Range Index）不索引每一行，而是为<strong>连续的物理数据块范围</strong>存储摘要信息（如该范围内某列的最小值和最大值）。</p>
+  <h3>核心前提：数据必须"有序"</h3>
+  <p>BRIN 高效的前提是：<strong>列值与物理存储顺序强相关</strong>。典型的例子是 <code>created_at</code> 时间戳或自增 ID——新数据不断追加到表的末尾，相邻的物理块里有相近的值。</p>
+  <p>如果数据随机写入，同一块范围内的值毫无关联，BRIN 的摘要信息就几乎无效，查询时需要回表验证大量误匹配行。</p>
+  <h3>优势与劣势</h3>
+  <ul>
+    <li><strong>体积极小</strong>：BRIN 索引的体积远小于 B-tree，维护开销极低</li>
+    <li><strong>写入快</strong>：INSERT/UPDATE 基本不额外增加索引维护成本</li>
+    <li><strong>精度低</strong>：扫描时可能返回不匹配的行，需要回表验证</li>
+  </ul>
+  <p><strong>适用</strong>：百 GB 甚至 TB 级的表，按时间窗口查，且数据是追加写入的。</p>
+  <h2>六、按场景的决策速查表</h2>
+  <p>以下决策树来自 AppMaster 的实战总结：</p>
+  <table>
+    <thead><tr><th>屏幕/界面做什么</th><th>典型查询形态</th><th>最佳索引</th><th>示例操作符</th></tr></thead>
+    <tbody>
+      <tr><td>简单过滤（status、user_id）</td><td>等值缩小结果集</td><td><strong>B-tree</strong></td><td><code>=</code>, <code>IN</code></td></tr>
+      <tr><td>日期/数值范围过滤</td><td>时间窗口或价格区间</td><td><strong>B-tree</strong></td><td><code>&gt;=</code>, <code>&lt;=</code>, <code>BETWEEN</code></td></tr>
+      <tr><td>列表排序 + 分页</td><td><code>WHERE ... ORDER BY ... LIMIT</code></td><td><strong>B-tree</strong>（复合索引）</td><td><code>ORDER BY</code></td></tr>
+      <tr><td>高基数列精确匹配（user_id、order_id）</td><td>选择性极高的查找</td><td><strong>B-tree</strong></td><td><code>=</code></td></tr>
+      <tr><td>全文搜索框</td><td>在文本中搜词</td><td><strong>GIN</strong></td><td><code>@@</code> on <code>tsvector</code></td></tr>
+      <tr><td>JSONB 包含（tags、properties）</td><td>匹配 JSON 形状或键值</td><td><strong>GIN</strong>（jsonb_ops）</td><td><code>@&gt;</code>, <code>?</code></td></tr>
+      <tr><td>JSONB 单键等值</td><td>频繁按某个 JSON 键过滤</td><td><strong>B-tree</strong>（表达式索引）</td><td><code>(data-&gt;&gt;'key') = 'value'</code></td></tr>
+      <tr><td>地理最近邻</td><td>"离我近"或地图视图</td><td><strong>GiST</strong>（PostGIS）</td><td><code>ST_DWithin</code>, <code>&lt;-&gt;</code></td></tr>
+      <tr><td>范围重叠（排期、价格区间）</td><td>区间是否重叠</td><td><strong>GiST</strong></td><td><code>&amp;&amp;</code></td></tr>
+      <tr><td>超大型表的时间范围查询</td><td>按时间过滤最近 N 天</td><td><strong>BRIN</strong></td><td><code>&gt;=</code>, <code>&lt;=</code></td></tr>
+      <tr><td>低选择性过滤（布尔值、小枚举）</td><td>大部分行都匹配</td><td><strong>索引通常没帮助</strong></td><td><code>is_active = true</code></td></tr>
+    </tbody>
+  </table>
+  <p>如果不同端点有不同的查询模式，<strong>同一张表上可以同时存在不同类型的索引</strong>。比如一个管理列表需要 <code>(tenant_id, created_at)</code> 上的 B-tree 来加速排序，而搜索页面需要 <code>tsvector</code> 上的 GIN。关键是：<strong>只保留两种查询模式都真正需要的索引</strong>。</p>
+  <h2>七、索引军规</h2>
+  <p><strong>1. 从 1-2 个主力索引开始</strong>，不要一开始就堆索引。先用 <code>EXPLAIN (ANALYZE)</code> 验证查询计划，确认瓶颈所在再补。</p>
+  <p><strong>2. 高基数列优先，低基数列慎建</strong>。在 <code>user_id</code>、<code>order_id</code> 上建索引通常很有效；在 <code>is_active</code> 这类布尔列上单独建索引往往浪费，因为每个值匹配大量行，PostgreSQL 可能选择顺序扫描。</p>
+  <p><strong>3. 复合索引顺序看查询</strong>。等值条件放左边，范围条件放右边。如果查询有时用 A、有时用 B、有时用 A+B，考虑分别建单列索引，依赖 PostgreSQL 的位图索引组合；如果查询总是固定组合，用复合索引更划算。</p>
+  <p><strong>4. 考虑部分索引和覆盖索引</strong>。<code>WHERE status = 'active'</code> 这种高频过滤场景，用部分索引缩小索引体积。<code>INCLUDE</code> 可以把常用的返回列放进索引，促成 Index-Only Scan 减少回表。</p>
+  <p><strong>5. 小表慎建索引</strong>。数据量很小或返回行数接近全表时，顺序扫描往往更快。</p>
+  <p><strong>6. 定期清理无用索引</strong>。生产环境中"以防万一"建的索引，经过半年运行后可能从未被使用，但它们仍然在每次写入时拖慢性能。通过 <code>pg_stat_user_indexes</code> 的 <code>idx_scan</code> 可以识别从未使用过的索引。</p>
+  <hr>
+  <blockquote><p><strong>结语</strong>：<br>索引选型不是猜谜，也不是"能建多少建多少"的军备竞赛。它本质上是在回答一个问题：<strong>这个查询想让数据库跳过多少行？</strong></p><p>B-tree 通用，GIN 倒排，GiST 空间，BRIN 顺序大表。把查询的操作符写下来，看看它想做什么，索引类型自然就清晰了。而索引数量的边界，由你的写入吞吐量说了算——Percona 那份基准数据清楚地告诉我们：<strong>每多一个索引，都在为写入性能买单</strong>。</p></blockquote>
+</template>
+
+<div id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg">已复制到剪贴板</span></div>
+
+<script>
+  /* 动态填充今天日期 */
+  (function(){
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth()+1).padStart(2,'0');
+    const d = String(now.getDate()).padStart(2,'0');
+    const dateStr = `${y}.${m}.${d}`;
+    document.querySelectorAll('.article-date').forEach(el => el.textContent = dateStr);
+  })();
+
+  const themeButtons=document.querySelectorAll('[data-theme-set]');const root=document.documentElement;const themes=['light','dim','dark'];
+  function setTheme(t){root.setAttribute('data-theme',t);themeButtons.forEach(b=>b.classList.toggle('active',b.dataset.themeSet===t));try{localStorage.setItem('devlog-theme',t)}catch(e){}}
+  themeButtons.forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.themeSet)));
+  document.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='t'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){const c=root.getAttribute('data-theme');const n=themes[(themes.indexOf(c)+1)%themes.length];setTheme(n);const l={light:'亮色',dim:'暗淡',dark:'深色'};showToast(`主题：${l[n]}`)}});
+  let st='dark';try{st=localStorage.getItem('devlog-theme')||'dark'}catch(e){}setTheme(st);
+  const pb=document.getElementById('progress-bar');
+  function up(){const st2=window.scrollY;const dh=document.documentElement.scrollHeight-window.innerHeight;const p=dh>0?(st2/dh)*100:0;pb.style.width=Math.min(p,100)+'%'}
+  window.addEventListener('scroll',up,{passive:true});window.addEventListener('resize',up);up();
+  const phrases=[{cmd:'cat 宣言.txt',out:'"发布 > 完美。永远如此。"'},{cmd:'ls ./热爱/',out:'分布式系统/  开发工具/  rust/  咖啡/'},{cmd:'git log --oneline -1',out:'a4f7c2e 修复: 凌晨3点那个 bug（终于）'},{cmd:'echo $心情',out:'正在调试宇宙'},{cmd:'make --jobs=$(nproc) 咖啡',out:'冲泡中... 已排队 3 杯'}];
+  const tt=document.getElementById('typewriter'),ot=document.getElementById('typewriter-out');let pi=0,ci=0,ph='typing';
+  function tick(){const c=phrases[pi];if(ph==='typing'){if(ci<=c.length){tt.textContent=c.slice(0,ci);ci++;setTimeout(tick,90+Math.random()*60)}else{ph='output';setTimeout(typeOut,450)}}else if(ph==='deleting'){if(ci>=0){tt.textContent=c.slice(0,ci);ci--;ot.textContent='';setTimeout(tick,35)}else{ph='typing';pi=(pi+1)%phrases.length;ci=0;setTimeout(tick,350)}}}
+  function typeOut(){const c=phrases[pi];let oi=0;(function s(){if(oi<=c.length){ot.textContent=c.slice(0,oi);oi++;setTimeout(s,45)}else{setTimeout(()=>{ph='deleting';ci=c.length;tick()},2400)}})()}
+  tick();
+  function bindCopy(){document.querySelectorAll('.copy-btn').forEach(b=>{if(b.dataset.bound)return;b.dataset.bound='true';b.addEventListener('click',async()=>{const cb=b.closest('.code-block');if(!cb)return;const code=cb.querySelector('code').innerText;try{await navigator.clipboard.writeText(code)}catch(e){const ta=document.createElement('textarea');ta.value=code;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(_){}document.body.removeChild(ta)}const orig=b.innerHTML;b.innerHTML='<i class="fas fa-check text-[10px]"></i> 已复制';b.classList.add('flashing');cb.classList.add('copied');showToast('已复制到剪贴板');setTimeout(()=>{b.innerHTML=orig;b.classList.remove('flashing');cb.classList.remove('copied')},1500)})})}
+  bindCopy();
+  document.getElementById('copy-qq').addEventListener('click',async()=>{const qq='3396859826';try{await navigator.clipboard.writeText(qq)}catch(e){const ta=document.createElement('textarea');ta.value=qq;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(_){}document.body.removeChild(ta)}showToast(`QQ 号已复制：${qq}`)});
+  let toastTimer;const toastEl=document.getElementById('toast'),toastMsg=document.getElementById('toast-msg');
+  function showToast(m){toastMsg.textContent=m;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),2200)}
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:.08,rootMargin:'0px 0px -50px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  const hs=document.querySelector('.hero-spotlight'),term=document.getElementById('terminal');
+  document.addEventListener('mousemove',e=>{if(hs){const r=hs.getBoundingClientRect();hs.style.setProperty('--mx',((e.clientX-r.left)/r.width)*100+'%');hs.style.setProperty('--my',((e.clientY-r.top)/r.height)*100+'%')}if(term&&window.innerWidth>768){const r=term.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;const dx=(e.clientX-cx)/window.innerWidth,dy=(e.clientY-cy)/window.innerHeight;term.style.transform=`perspective(1200px) rotateY(${dx*3}deg) rotateX(${-dy*3}deg)`}});
+  const modal=document.getElementById('article-modal'),modalClose=document.getElementById('modal-close-btn'),acc=document.getElementById('article-content-container');
+  function openModal(id){const tpl=document.getElementById('article-'+id);if(!tpl)return;acc.innerHTML='';acc.appendChild(tpl.content.cloneNode(true));modal.classList.add('open');document.body.style.overflow='hidden';bindCopy();modal.querySelector('.modal-content').scrollTop=0}
+  function closeModal(){modal.classList.remove('open');document.body.style.overflow=''}
+  document.querySelectorAll('.article-card[data-article-id]').forEach(c=>{const id=c.dataset.articleId;c.addEventListener('click',()=>openModal(id));c.addEventListener('keydown',e=>{if(e.key==='Enter')openModal(id)})});
+  modalClose.addEventListener('click',closeModal);document.querySelector('.modal-backdrop').addEventListener('click',closeModal);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeModal()});
+</script>
+</body>
+</html>
